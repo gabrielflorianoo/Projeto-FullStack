@@ -6,6 +6,12 @@
 }
 
 .inputs {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    gap: 20px;
+}
+
+.inputs div {
     display: flex;
     gap: 10px;
 }

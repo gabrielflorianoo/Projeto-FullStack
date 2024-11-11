@@ -1,15 +1,10 @@
 import { Button, TextField, MenuItem, Select } from '@mui/material';
-import useLocalStorage from './hooks/useLocalStorageData'; // Custom hook
-import React, { useState, useEffect } from 'react';
+import useLocalStorage from './hooks/useLocalStorageData';
+import React, { useState, useEffect, useMemo } from 'react';
 import currencyData from './api/currencies.json';
 import convertCoin from './api/converter';
 import './App.css';
 
-/**
- * Salva um dado no armazenamento local do navegador.
- * @param {string} variableName - Nome da variável a ser salva.
- * @param {any} dataToSave - Dado a ser salvo.
- */
 function saveToLocalStorage(variableName, dataToSave) {
     localStorage.setItem(variableName, JSON.stringify(dataToSave));
 }
@@ -17,25 +12,29 @@ function saveToLocalStorage(variableName, dataToSave) {
 function App() {
     const [amount, setAmount] = useState(1);
     const [result, setResult] = useState(0);
-    const conversionRate = useLocalStorage('conversionRate');
+    const [autoConverter, setAutoConverter] = useState(false);
+    const conversionRate = parseFloat(useLocalStorage('conversionRate'));
     const savedTargetCurrency = useLocalStorage('targetCurrency');
-    const [targetCurrency, setTargetCurrency] = useState('USD'); // Moeda alvo padrão
+    const [targetCurrency, setTargetCurrency] = useState('USD');
 
-    // Seta a moeda alvo quando houver dados no armazenamento local
+    // Cria um array com todas as moedas, exceto a EUR usando memorização
+    const currencyOptions = useMemo(
+        () => currencyData.currencies.filter((currency) => currency !== 'EUR'),
+        []
+    );
+
     useEffect(() => {
         if (savedTargetCurrency) {
             setTargetCurrency(savedTargetCurrency);
         }
     }, [savedTargetCurrency]);
 
-    /**
-     * Função para converter o valor em EUR(unica conversão disponível na versão gratuita da api) para a moeda alvo.
-     * Caso haja dados no armazenamento local, utiliza a taxa de conversao
-     * salva. Caso contrario, chama a API para obter a taxa de conversao
-     * mais recente.
-     * @async
-     * @function
-     */
+    useEffect(() => {
+        // Atualiza automaticamente a conversão quando `targetCurrency` muda
+        // Ou quando o `amount` mudar, mas apenas se `autoConverter` estiver ativado
+        handleConvert();
+    }, [autoConverter ? amount : targetCurrency]);
+
     const handleConvert = async () => {
         if (conversionRate !== null && savedTargetCurrency === targetCurrency) {
             setResult(parseFloat(amount * conversionRate));
@@ -56,31 +55,45 @@ function App() {
     return (
         <div className="App">
             <div className="inputs">
-                <TextField
-                    label="Valor em EUR"
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                />
-                <Select
-                    value={targetCurrency}
-                    onChange={(e) => setTargetCurrency(e.target.value)}
-                    label="Moeda"
+                <Button
+                    variant="contained"
+                    color={autoConverter ? 'error' : 'primary'}
+                    onClick={() => setAutoConverter(!autoConverter)}
                 >
-                    {currencyData.currencies.map((currency) => {
-                        if (currency !== 'EUR') {
-                            return (
-                                <MenuItem key={currency} value={currency}>
-                                    {currency}
-                                </MenuItem>
-                            );
+                    {autoConverter ? 'Parar Conversão Automática' : 'Iniciar Conversão Automática'}
+                </Button>
+                <div>
+                    <TextField
+                        label="Valor em EUR"
+                        type="number"
+                        value={amount}
+                        onChange={(e) =>
+                            setAmount(e.target.value > -1 ? e.target.value : 0)
                         }
-                    })}
-                </Select>
+                    />
+                    <Select
+                        value={targetCurrency}
+                        onChange={(e) => setTargetCurrency(e.target.value)}
+                        label="Moeda"
+                    >
+                        {currencyOptions.map((currency) => (
+                            <MenuItem key={currency} value={currency}>
+                                {currency}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </div>
             </div>
-            <Button variant="contained" onClick={handleConvert}>
-                Converter
-            </Button>
+            <div>
+                <Button variant="contained" onClick={handleConvert}>
+                    Converter
+                </Button>
+                <p>
+                    {conversionRate !== null
+                        ? `Taxa de Conversão: ${conversionRate.toFixed(2)}`
+                        : 'Sem taxa de conversão'}
+                </p>
+            </div>
             <p>
                 {result !== 0 || conversionRate !== null
                     ? `Valor em ${targetCurrency}: ${result.toFixed(2)}`
