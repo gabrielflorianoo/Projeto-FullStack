@@ -1,4 +1,4 @@
-![](images/coinverte.png) 
+![](coinverte.png) 
 # Conversor de Moedas
 
 Este é um projeto de conversão de moedas desenvolvido em React, que utiliza a API de conversão do [Fixer.io](https://fixer.io) para obter a taxa de câmbio mais recente e converter um valor em EUR para uma moeda alvo selecionada pelo usuário. Ele também usa o armazenamento local para guardar a taxa de câmbio e a moeda alvo da última conversão, otimizando o uso da API.
