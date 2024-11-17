@@ -2,24 +2,39 @@ import React from 'react';
 import { Container, Box } from '@mui/material';
 import Introduction from './components/Introduction';
 import CurrencyConverter from './components/CurrencyConverter';
+import ExchangeRateList from './components/ExchangeRateList';
+import Developers from './components/Developers';
+import Footer from './components/Footer';
+import Header from './components/Header';
+import useThemeSwitcher from './hooks/useThemeSwitcher';
 
-const App = () => (
-  <Container
-    sfx={{
-      background: 'linear-gradient(120deg, #50E3C2, #F5A623)',
-      height: '100vh',
-      display: 'grid',
-      gap: 2,
-    }}
-    disableGutters maxWidth={false}>
-    {/* Camada de introdução */}
-    <Introduction />
+const App = () => {
+  const { theme, toggleTheme } = useThemeSwitcher();
 
-    {/* Conversor de Moedas */}
-    <Box>
-      <CurrencyConverter />
-    </Box>
-  </Container>
-);
+  return (
+    <Container
+      disableGutters
+      maxWidth={false}
+      sx={{
+        bgcolor: theme === 'light' ? '#f4f6f8' : '#121212',
+        color: theme === 'light' ? '#000' : '#fff',
+        fontFamily: 'Roboto, sans-serif',
+      }}
+    >
+      <Header toggleTheme={toggleTheme} currentTheme={theme} />
+      <Box>
+        <Introduction />
+        <Box sx={{ py: 5 }}>
+          <CurrencyConverter />
+        </Box>
+        <Box sx={{ py: 5 }}>
+          <ExchangeRateList />
+        </Box>
+        <Developers />
+      </Box>
+      <Footer />
+    </Container>
+  );
+};
 
 export default App;
