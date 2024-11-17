@@ -1,8 +1,10 @@
 import React from 'react';
-import { Box, Typography, Avatar } from '@mui/material';
+import { Box, Typography, Avatar, Button } from '@mui/material';
+import Introduction from './Introduction';
 
 const Developers = () => (
   <Box textAlign="center">
+    <Introduction />
     <Typography variant="h4" gutterBottom>
       Desenvolvedores
     </Typography>
@@ -34,6 +36,14 @@ const Developers = () => (
         </Typography>
       </Box>
     </Box>
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={() => {
+        window.location.href = '/';
+      }}
+      target="_blank"
+    >Voltar</Button>
   </Box>
 );
 

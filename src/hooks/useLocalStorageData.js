@@ -11,6 +11,9 @@ function useLocalStorage(variableName) {
         if (dataFromStorage) {
             // Se houver, atualiza o estado
             setData(JSON.parse(dataFromStorage));
+        } else {
+            // Se não houver, retorna null
+            setData(null);
         }
     }, []);
 

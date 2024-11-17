@@ -2,12 +2,23 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import Home from './components/Home'
+import Developers from './components/Developers';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
     <React.StrictMode>
-        <App />
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/converter" element={<App />} />
+                <Route path="/creditos" element={<Developers />} />
+                <Route path="*" element={<Navigate to="/" />} /> {/* Redireciona rotas que nao existem */}
+            </Routes>
+        </BrowserRouter>
     </React.StrictMode>
 );
 
