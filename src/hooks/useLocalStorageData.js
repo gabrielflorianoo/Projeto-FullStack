@@ -1,23 +1,27 @@
 import { useState, useEffect } from 'react';
 
-// Custom hook que retorna os dados armazenados no armazenamento local.
-function useLocalStorage(variableName) {
-    const [data, setData] = useState(null);
-
-    useEffect(() => {
-        // Checa se há dados no armazenamento local
-        const dataFromStorage = localStorage.getItem(variableName);
-
-        if (dataFromStorage) {
-            // Se houver, atualiza o estado
-            setData(JSON.parse(dataFromStorage));
-        } else {
-            // Se não houver, retorna null
-            setData(null);
+function useLocalStorage(key, initialValue = null) {
+    const [storedValue, setStoredValue] = useState(() => {
+        try {
+            const item = localStorage.getItem(key);
+            return item ? JSON.parse(item) : initialValue;
+        } catch (error) {
+            console.error('Erro ao acessar o localStorage:', error);
+            return initialValue;
         }
-    }, []);
+    });
 
-    return data;
+    const setValue = (value) => {
+        try {
+            const valueToStore = value instanceof Function ? value(storedValue) : value;
+            setStoredValue(valueToStore);
+            localStorage.setItem(key, JSON.stringify(valueToStore));
+        } catch (error) {
+            console.error('Erro ao salvar no localStorage:', error);
+        }
+    };
+
+    return [storedValue, setValue];
 }
 
 export default useLocalStorage;
