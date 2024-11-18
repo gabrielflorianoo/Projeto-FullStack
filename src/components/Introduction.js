@@ -1,9 +1,10 @@
 import React from 'react';
 import { Box, Button, Container } from '@mui/material';
-import useThemeSwitcher from '../hooks/useThemeSwitcher';
-import useLocalStorage from '../hooks/useLocalStorageData';
+import { useThemeContext } from '../context/ThemeContext';
 
-const Introduction = ({ theme, toggleTheme }) => {
+const Introduction = () => {
+  const { theme, toggleTheme } = useThemeContext();
+  
   return (
     <>
       <Container
