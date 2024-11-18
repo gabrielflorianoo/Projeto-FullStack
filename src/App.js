@@ -4,11 +4,10 @@ import Introduction from './components/Introduction';
 import CurrencyConverter from './components/CurrencyConverter';
 
 import useThemeSwitcher from './hooks/useThemeSwitcher';
-import useLocalStorage from './hooks/useLocalStorageData';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 const App = () => {
-  const { theme } = useThemeSwitcher(useLocalStorage('theme'));
+  const { theme, toggleTheme } = useThemeSwitcher('light'); // Define o tema inicial como "light"
 
   // Cria os temas
   const lightTheme = createTheme({
@@ -58,10 +57,10 @@ const App = () => {
         disableGutters
         maxWidth={false}
       >
-        {/* Introduction Layer */}
-        <Introduction />
+        {/* Passa a função de alternar tema para o componente Introduction */}
+        <Introduction theme={theme} toggleTheme={toggleTheme} />
 
-        {/* Currency Converter */}
+        {/* Conversor de Moeda */}
         <Box>
           <CurrencyConverter />
         </Box>

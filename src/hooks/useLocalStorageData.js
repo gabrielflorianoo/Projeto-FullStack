@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 function useLocalStorage(key, initialValue = null) {
     const [storedValue, setStoredValue] = useState(() => {
@@ -11,17 +11,7 @@ function useLocalStorage(key, initialValue = null) {
         }
     });
 
-    const setValue = (value) => {
-        try {
-            const valueToStore = value instanceof Function ? value(storedValue) : value;
-            setStoredValue(valueToStore);
-            localStorage.setItem(key, JSON.stringify(valueToStore));
-        } catch (error) {
-            console.error('Erro ao salvar no localStorage:', error);
-        }
-    };
-
-    return [storedValue, setValue];
+    return storedValue;
 }
 
 export default useLocalStorage;

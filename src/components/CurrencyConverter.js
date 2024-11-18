@@ -4,7 +4,7 @@ import useLocalStorage from '../hooks/useLocalStorageData';
 import currencyData from '../api/currencies.json';
 import axios from 'axios';
 
-const API_KEY = '09612e6a2ae12aa8c29017728fd7109e';
+const API_KEY = 'b5f559e5613bbdde3052572c4a482ee0';
 
 function saveToLocalStorage(variableName, dataToSave) {
 	localStorage.setItem(variableName, JSON.stringify(dataToSave));
@@ -13,26 +13,30 @@ function saveToLocalStorage(variableName, dataToSave) {
 const CurrencyConverter = () => {
 	const [amount, setAmount] = useState(1); // Quantia em EUR
 	const [autoConverter, setAutoConverter] = useState(false);  // Ativar a conversão automática
-	const [targetCurrency, setTargetCurrency] = useState(useLocalStorage('targetCurrency') || 'USD'); // Moeda de destino
-	const [conversionRate, setConversionRate] = useState(useLocalStorage('conversionRate')); // Taxa de conversão
+	const [targetCurrency, setTargetCurrency] = useState('USD'); // Moeda de destino
+	const [conversionRate, setConversionRate] = useState(null); // Taxa de conversão
 	const [result, setResult] = useState(null); // Resultado da conversão
 	const [loading, setLoading] = useState(false); // Estado de carregamento
 
 	const savedTargetCurrency = useLocalStorage('targetCurrency');
-
-	useEffect(() => {
-		if (savedTargetCurrency) {
-			setTargetCurrency(savedTargetCurrency);
-		}
-	}, [savedTargetCurrency]);
+	const savedConvertionRate = useLocalStorage('conversionRate');
 
 	useEffect(() => {
 		// Atualiza automaticamente a conversão quando `targetCurrency` ou `amount` muda
 		// Mas o `amount` só deve ser considerado se `autoConverter` estiver ativado
-		if (autoConverter || !autoConverter) {
+		if (autoConverter) {
 			handleConvert();
 		}
-	}, [amount, targetCurrency, autoConverter]);	
+	}, [amount, targetCurrency, autoConverter]);
+	
+	useEffect(() => {
+		if (savedTargetCurrency) {
+			setTargetCurrency(savedTargetCurrency);
+		}
+		if (savedConvertionRate) {
+			setConversionRate(savedConvertionRate);
+		}
+	}, [savedTargetCurrency, savedConvertionRate]);
 
 	// Lista de moedas disponíveis, exceto EUR
 	const currencyOptions = useMemo(
@@ -117,9 +121,9 @@ const CurrencyConverter = () => {
 			>
 				{loading ? <CircularProgress size={24} color="inherit" /> : 'Converter'}
 			</Button>
-			{conversionRate && (
+			{(conversionRate && targetCurrency) && (
 				<Typography variant="h6" mt={3}>
-					Taxa de Conversão: 1 EUR = {conversionRate.toFixed(2)} {targetCurrency}
+					Taxa de Conversão: 1 EUR = {parseFloat(conversionRate).toFixed(2)} {targetCurrency}
 				</Typography>
 			)}
 			{result && (

@@ -3,14 +3,7 @@ import { Box, Button, Container } from '@mui/material';
 import useThemeSwitcher from '../hooks/useThemeSwitcher';
 import useLocalStorage from '../hooks/useLocalStorageData';
 
-const Introduction = () => {
-  const { theme, toggleTheme } = useThemeSwitcher(useLocalStorage('theme'));
-
-  const handleTheme = () => {
-    const nextTheme = theme === 'light' ? 'dark' : 'light';
-    toggleTheme(nextTheme);
-  };
-
+const Introduction = ({ theme, toggleTheme }) => {
   return (
     <>
       <Container
@@ -78,7 +71,7 @@ const Introduction = () => {
               width: 'fit-content',
               height: 'fit-content',
             }}
-            onClick={handleTheme}
+            onClick={() => toggleTheme(theme === 'light' ? 'dark' : 'light')}
           >
             Modo Escuro
           </Button>
