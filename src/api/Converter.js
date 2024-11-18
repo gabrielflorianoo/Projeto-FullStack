@@ -1,22 +1,18 @@
 import axios from 'axios';
 
-const API_KEY = 'dcc4215d48948f04f6e7dfc58baae0af';
-
-const options = {
-    method: 'GET',
-    url: `https://data.fixer.io/api/latest?access_key=${API_KEY}`,
-    params: {
-        base: 'EUR',
-        symbols: 'USD',
-    },
-};
+const API_KEY = '09612e6a2ae12aa8c29017728fd7109e';
 
 async function convertCoin(currency) {
     try {
+        const response = await axios({
+            method: 'GET',
+            url: `https://data.fixer.io/api/latest?access_key=${API_KEY}`,
+            params: {
+                base: 'EUR',
+                symbols: currency,
+            }
+        });
 
-        options.params.symbols = currency;
-
-        const response = await axios(options);
         return response.data;
     } catch (error) {
         console.log(error);

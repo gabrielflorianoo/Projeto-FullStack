@@ -3,23 +3,71 @@ import { Container, Box } from '@mui/material';
 import Introduction from './components/Introduction';
 import CurrencyConverter from './components/CurrencyConverter';
 
-const App = () => (
-  <Container
-    sfx={{
-      background: 'linear-gradient(120deg, #50E3C2, #F5A623)',
-      height: '100vh',
-      display: 'grid',
-      gap: 2,
-    }}
-    disableGutters maxWidth={false}>
-    {/* Camada de introdução */}
-    <Introduction />
+import useThemeSwitcher from './hooks/useThemeSwitcher';
+import useLocalStorage from './hooks/useLocalStorageData';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
-    {/* Conversor de Moedas */}
-    <Box>
-      <CurrencyConverter />
-    </Box>
-  </Container>
-);
+const App = () => {
+  const { theme } = useThemeSwitcher(useLocalStorage('theme'));
+
+  // Cria os temas
+  const lightTheme = createTheme({
+    palette: {
+      mode: 'light',
+      background: {
+        default: '#f4f6f8',
+        paper: '#fff',
+      },
+      text: {
+        primary: '#000',
+        secondary: '#555',
+      },
+    },
+    typography: {
+      fontFamily: 'Roboto, sans-serif',
+    },
+  });
+
+  const darkTheme = createTheme({
+    palette: {
+      mode: 'dark',
+      background: {
+        default: '#121212',
+        paper: '#1e1e1e',
+      },
+      text: {
+        primary: '#fff',
+        secondary: '#aaa',
+      },
+    },
+    typography: {
+      fontFamily: 'Roboto, sans-serif',
+    },
+  });
+
+  return (
+    <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+      <Container
+        sx={{
+          bgcolor: 'background.default',
+          color: 'text.primary',
+          height: '100vh',
+          display: 'grid',
+          gap: 2,
+        }}
+        disableGutters
+        maxWidth={false}
+      >
+        {/* Introduction Layer */}
+        <Introduction />
+
+        {/* Currency Converter */}
+        <Box>
+          <CurrencyConverter />
+        </Box>
+      </Container>
+    </ThemeProvider>
+  );
+};
 
 export default App;
