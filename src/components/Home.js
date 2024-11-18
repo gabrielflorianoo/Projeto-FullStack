@@ -2,7 +2,6 @@ import React from 'react';
 import { Container, Box, Typography } from '@mui/material';
 import Introduction from './Introduction';
 
-import { ThemeProvider } from '@mui/material/styles';
 import { useThemeContext } from '../context/ThemeContext';
 
 const Home = () => {
@@ -33,9 +32,8 @@ const Home = () => {
                     Obrigado por usar nosso serviço!
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
-                    Estamos felizes em saber que você está utilizando nosso serviço de
-                    conversão de moedas. Nossa equipe trabalha arduamente para
-                    garantir que você tenha a melhor experiência possível.
+                    Estamos felizes em saber que você está utilizando nosso serviço de conversão de moedas. <br/> 
+                    Nossa equipe trabalha arduamente para garantir que você tenha a melhor experiência possível.
                 </Typography>
             </Box>
         </Container>
