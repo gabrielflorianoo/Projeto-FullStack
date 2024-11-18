@@ -1,12 +1,11 @@
 import React from 'react';
 import { Container, Box, Typography } from '@mui/material';
+import Footer from './Footer';
 import Introduction from './Introduction';
 
 import { useThemeContext } from '../context/ThemeContext';
 
 const Home = () => {
-    const { theme, toggleTheme } = useThemeContext();
-
     return (
         <Container
             sx={{
@@ -36,6 +35,7 @@ const Home = () => {
                     Nossa equipe trabalha arduamente para garantir que você tenha a melhor experiência possível.
                 </Typography>
             </Box>
+            <Footer />
         </Container>
     );
 };

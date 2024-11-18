@@ -1,12 +1,13 @@
 import React from 'react';
 import { Box, Typography, Avatar, Button, Container } from '@mui/material';
+import Footer from './Footer';
 import Introduction from './Introduction';
-
-import { ThemeProvider } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import { useThemeContext } from '../context/ThemeContext';
 
 const Developers = () => {
 	const { theme, toggleTheme } = useThemeContext();
+	const navigate = useNavigate();
 
 	return (
 		<Container
@@ -41,13 +42,21 @@ const Developers = () => {
 					}}
 				>
 					<Box textAlign="center">
-						<Avatar alt="Robson" sx={{ width: 100, height: 100, margin: '0 auto' }} />
+						<Avatar
+							alt="Robson Carvalho"
+							src="https://avatars.githubusercontent.com/u/55316471?v=4"
+							sx={{ width: 100, height: 100, margin: '0 auto' }}
+						/>
 						<Typography variant="body1" sx={{ mt: 1 }}>
 							Robson Carvalho
 						</Typography>
 					</Box>
 					<Box textAlign="center">
-						<Avatar alt="Gabriel" sx={{ width: 100, height: 100, margin: '0 auto' }} />
+						<Avatar
+							alt="Gabriel Floriano"
+							src="https://avatars.githubusercontent.com/u/55316471?v=4"
+							sx={{ width: 100, height: 100, margin: '0 auto' }}
+						/>
 						<Typography variant="body1" sx={{ mt: 1 }}>
 							Gabriel Floriano
 						</Typography>
@@ -56,14 +65,15 @@ const Developers = () => {
 				<Button
 					variant="contained"
 					color="primary"
-					onClick={() => {
-						window.location.href = '/';
-					}}
-					target="_blank"
-				>Voltar</Button>
+					onClick={() => navigate('/')}
+					sx={{ mt: 4 }}
+				>
+					Voltar
+				</Button>
 			</Box>
+			<Footer />
 		</Container>
 	);
-}
+};
 
 export default Developers;

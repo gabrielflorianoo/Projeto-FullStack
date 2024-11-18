@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Box } from '@mui/material';
 import Introduction from './components/Introduction';
 import CurrencyConverter from './components/CurrencyConverter';
+import Footer from './components/Footer';
 
 import { ThemeProvider } from '@mui/material/styles';
 import { useThemeContext } from './context/ThemeContext';
@@ -28,6 +29,7 @@ const App = () => {
       <Box>
         <CurrencyConverter />
       </Box>
+      <Footer />
     </Container>
   );
 };
