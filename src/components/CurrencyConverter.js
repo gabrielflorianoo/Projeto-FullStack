@@ -34,7 +34,7 @@ const CurrencyConverter = () => {
 		if (savedTargetCurrency) setTargetCurrency(savedTargetCurrency);
 		if (savedConversionRate) setConversionRate(savedConversionRate);
 		if (savedApiKey) setApiKey(savedApiKey);
-	}, [savedTargetCurrency, savedConversionRate, savedApiKey, setApiKey]);	
+	}, [savedTargetCurrency, savedConversionRate, savedApiKey, setApiKey]);
 
 	// Atualiza automaticamente a conversão quando `targetCurrency` ou `amount` muda
 	useEffect(() => {
@@ -53,6 +53,10 @@ const CurrencyConverter = () => {
 			setLastResult(conversion.toFixed(2));
 		} else {
 			try {
+				if (!apiKey) {
+					throw new Error('API Key não fornecida');
+				}
+
 				const { data } = await axios.get(`https://data.fixer.io/api/latest?access_key=${apiKey}`, {
 					params: { base: 'EUR', symbols: targetCurrency },
 				});
@@ -76,7 +80,12 @@ const CurrencyConverter = () => {
 				saveToLocalStorage('conversionRate', rate);
 				saveToLocalStorage('targetCurrency', targetCurrency);
 			} catch (error) {
-				console.error('Erro ao buscar taxa de conversão:', error);
+				// Mensagem de erro customizada
+				if (error.message === 'Erro ao buscar taxa de conversão') {
+					alert('Erro ao converter moedas:', error);
+				} else if (error.message === 'API Key não fornecida') {
+					alert('Por favor, insira uma API Key antes de iniciar a conversão.');
+				}
 			}
 		}
 
@@ -89,6 +98,7 @@ const CurrencyConverter = () => {
 			setAmount(newAmount);
 		} else {
 			setAmount('');
+			alert('Por favor, insira um valor numérico maior ou igual a zero.');
 		}
 	}
 
@@ -110,6 +120,7 @@ const CurrencyConverter = () => {
 			<Box display="flex" justifyContent="center" gap={2} mb={3}>
 				<TextField
 					label="Valor em EUR"
+					sx={{ zIndex: 0 }}
 					type="number"
 					value={amount}
 					onChange={(e) => handleAmountChange(e.target.value)}

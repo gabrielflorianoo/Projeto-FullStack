@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 import { TextField, Button, Box } from '@mui/material';
+import { useThemeContext } from '../context/ThemeContext';
 
 const saveToLocalStorage = (key, value) => localStorage.setItem(key, JSON.stringify(value));
 
@@ -22,6 +23,7 @@ export const useApiKeyContext = () => useContext(ApiKeyContext);
 
 // Componente para inserir a API Key
 export const ApiKeyInput = () => {
+    const { theme, toggleTheme } = useThemeContext();
     const { apiKey, setApiKey } = useApiKeyContext();
     const [isVisible, setVisible] = useState(false);
 
@@ -77,17 +79,21 @@ export const ApiKeyInput = () => {
                     {/* Caixa do TextField */}
                     <Box
                         sx={{
-                            backgroundColor: 'white',
+                            backgroundColor: theme === 'light' ? 'background.default' : 'background.paper',
                             borderRadius: 2,
                             padding: 2,
                             display: 'flex',
                             flexDirection: 'column',
                             width: '80%',
                             maxWidth: '400px',
+                            zIndex: 1000,
                         }}
                         onClick={(e) => e.stopPropagation()} // Impede que o clique no campo feche o modal
                     >
                         <TextField
+                            sx={{
+                                color: theme === 'light' ? 'text.primary' : 'text.secondary',
+                            }}
                             label="API Key"
                             variant="outlined"
                             value={apiKey}
