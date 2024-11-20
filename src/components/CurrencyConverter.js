@@ -15,6 +15,8 @@ const CurrencyConverter = () => {
 	const [conversionRate, setConversionRate] = useState(null); // Taxa de conversão
 	const [result, setResult] = useState(null); // Resultado da conversão
 	const [loading, setLoading] = useState(false); // Estado de carregamento
+	const [lastAmount, setLastAmount] = useState(amount); // Última quantia convertida
+	const [lastResult, setLastResult] = useState(null);   // Último resultado convertido
 
 	// Dados salvos no Local Storage
 	const savedTargetCurrency = useLocalStorage('targetCurrency');
@@ -43,7 +45,10 @@ const CurrencyConverter = () => {
 
 		// Usa taxa salva no localStorage se possível
 		if (conversionRate && savedTargetCurrency === targetCurrency) {
-			setResult(amount * conversionRate);
+			const conversion = amount * conversionRate;
+			setResult(conversion.toFixed(2));
+			setLastAmount(amount);
+			setLastResult(conversion.toFixed(2));
 		} else {
 			try {
 				const { data } = await axios.get(`https://data.fixer.io/api/latest?access_key=${API_KEY}`, {
@@ -52,7 +57,10 @@ const CurrencyConverter = () => {
 
 				const rate = data.rates[targetCurrency];
 				setConversionRate(rate);
-				setResult((amount * rate).toFixed(2));
+				const conversion = amount * rate;
+				setResult(conversion.toFixed(2));
+				setLastAmount(amount);
+				setLastResult(conversion.toFixed(2));
 
 				// Salva dados no localStorage
 				saveToLocalStorage('conversionRate', rate);
@@ -64,6 +72,15 @@ const CurrencyConverter = () => {
 
 		setLoading(false);
 	};
+
+	const handleAmountChange = (amount) => {
+		const newAmount = Number(amount);
+		if (!isNaN(newAmount) && newAmount >= 0) {
+			setAmount(newAmount);
+		} else {
+			setAmount('');
+		}
+	}
 
 	return (
 		<Box textAlign="center">
@@ -85,7 +102,7 @@ const CurrencyConverter = () => {
 					label="Valor em EUR"
 					type="number"
 					value={amount}
-					onChange={(e) => setAmount(e.target.value)}
+					onChange={(e) => handleAmountChange(e.target.value)}
 				/>
 				<Select
 					value={targetCurrency}
@@ -118,7 +135,7 @@ const CurrencyConverter = () => {
 			{/* Exibição do resultado */}
 			{result && (
 				<Typography variant="h6" mt={2}>
-					{`${amount} EUR = ${result} ${targetCurrency}`}
+					{`${lastAmount} EUR = ${lastResult} ${targetCurrency}`}
 				</Typography>
 			)}
 		</Box>
