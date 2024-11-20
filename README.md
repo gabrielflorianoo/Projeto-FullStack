@@ -20,9 +20,9 @@ Este é um projeto de conversão de moedas desenvolvido em React, que utiliza a 
 
 ## Como Usar
 
-1. Troque o valor da variável "const API_KEY" no arquivo "CurrencyConverter.js" pela sua apiKey
-2. inicie o projeto com "npm start"
-3. Abra [http://localhost:3000](http://localhost:3000) no seu navegador para acessar a aplicação.
-4. Clique no botão "Converter moedas" para iniciar a conversão de moedas.
+1. Inicie o projeto com "npm start"
+2. Abra [http://localhost:3000](http://localhost:3000) no seu navegador para acessar a aplicação.
+3. Clique no botão com um ícone de chave na barra de navegação para inserir sua API Key.
+4. Após inserir a API Key, clique no botão "Converter moedas" para iniciar a conversão de moedas.
 5. Selecione a moeda alvo e insira o valor a ser convertido no campo de texto.
 6. Clique no botão "Converter" ou "Iniciar conversão automática" para converter o valor.

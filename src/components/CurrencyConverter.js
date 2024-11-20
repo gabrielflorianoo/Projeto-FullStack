@@ -1,14 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Box, TextField, Select, MenuItem, Button, Typography, CircularProgress } from '@mui/material';
 import useLocalStorage from '../hooks/useLocalStorageData';
+import { useApiKeyContext } from '../context/ApiKeyContext';
 import currencyData from '../api/currencies.json';
 import axios from 'axios';
-
-const API_KEY = 'b5f559e5613bbdde3052572c4a482ee0';
 
 const saveToLocalStorage = (key, value) => localStorage.setItem(key, JSON.stringify(value));
 
 const CurrencyConverter = () => {
+	const { apiKey, setApiKey } = useApiKeyContext(); // API Key
 	const [amount, setAmount] = useState(1); // Quantia em EUR
 	const [autoConverter, setAutoConverter] = useState(false); // Conversão automática
 	const [targetCurrency, setTargetCurrency] = useState('USD'); // Moeda de destino
@@ -21,6 +21,7 @@ const CurrencyConverter = () => {
 	// Dados salvos no Local Storage
 	const savedTargetCurrency = useLocalStorage('targetCurrency');
 	const savedConversionRate = useLocalStorage('conversionRate');
+	const savedApiKey = useLocalStorage('apiKey');
 
 	// Moedas disponíveis, exceto EUR
 	const currencyOptions = useMemo(
@@ -32,7 +33,8 @@ const CurrencyConverter = () => {
 	useEffect(() => {
 		if (savedTargetCurrency) setTargetCurrency(savedTargetCurrency);
 		if (savedConversionRate) setConversionRate(savedConversionRate);
-	}, [savedTargetCurrency, savedConversionRate]);
+		if (savedApiKey) setApiKey(savedApiKey);
+	}, [savedTargetCurrency, savedConversionRate, savedApiKey, setApiKey]);	
 
 	// Atualiza automaticamente a conversão quando `targetCurrency` ou `amount` muda
 	useEffect(() => {
@@ -51,9 +53,17 @@ const CurrencyConverter = () => {
 			setLastResult(conversion.toFixed(2));
 		} else {
 			try {
-				const { data } = await axios.get(`https://data.fixer.io/api/latest?access_key=${API_KEY}`, {
+				const { data } = await axios.get(`https://data.fixer.io/api/latest?access_key=${apiKey}`, {
 					params: { base: 'EUR', symbols: targetCurrency },
 				});
+
+				if (!data.success) {
+					if (data.error.code === 101) {
+						alert('A API Key informada é inválida. Por favor, verifique se a chave está correta.');
+					} else {
+						throw new Error('Erro ao buscar taxa de conversão');
+					}
+				}
 
 				const rate = data.rates[targetCurrency];
 				setConversionRate(rate);

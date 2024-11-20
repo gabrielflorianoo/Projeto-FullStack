@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { useThemeContext } from '../context/ThemeContext';
 
 const Footer = () => {
-	const { theme, toggleTheme } = useThemeContext();
+	const { theme } = useThemeContext();
 
 	return (
 		<Box

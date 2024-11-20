@@ -3,8 +3,6 @@ import { Container, Box, Typography } from '@mui/material';
 import Footer from './Footer';
 import Introduction from './Introduction';
 
-import { useThemeContext } from '../context/ThemeContext';
-
 const Home = () => {
     return (
         <Container

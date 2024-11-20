@@ -3,10 +3,8 @@ import { Box, Typography, Avatar, Button, Container } from '@mui/material';
 import Footer from './Footer';
 import Introduction from './Introduction';
 import { useNavigate } from 'react-router-dom';
-import { useThemeContext } from '../context/ThemeContext';
 
 const Developers = () => {
-	const { theme, toggleTheme } = useThemeContext();
 	const navigate = useNavigate();
 
 	return (

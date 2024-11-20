@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Button, Container, Typography } from '@mui/material';
 import { useThemeContext } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
+import { ApiKeyInput } from '../context/ApiKeyContext';
 
 const Introduction = () => {
 	const { theme, toggleTheme } = useThemeContext();
@@ -95,6 +96,7 @@ const Introduction = () => {
 				>
 					{theme === 'light' ? 'Modo Escuro' : 'Modo Claro'}
 				</Button>
+				<ApiKeyInput />
 			</Box>
 		</Container>
 	);

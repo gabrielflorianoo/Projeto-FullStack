@@ -8,19 +8,22 @@ import App from './App';
 import Home from './components/Home';
 import Developers from './components/Developers';
 import { ThemeContextProvider } from './context/ThemeContext';
+import { ApiKeyContextProvider } from './context/ApiKeyContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<React.StrictMode>
 		<ThemeContextProvider>
-			<HashRouter>
-				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/converter" element={<App />} />
-					<Route path="/creditos" element={<Developers />} />
-					<Route path="*" element={<Navigate to="/" />} /> {/* Redireciona rotas que não existem */}
-				</Routes>
-			</HashRouter>
+			<ApiKeyContextProvider>
+				<HashRouter>
+					<Routes>
+						<Route path="/" element={<Home />} />
+						<Route path="/converter" element={<App />} />
+						<Route path="/creditos" element={<Developers />} />
+						<Route path="*" element={<Navigate to="/" />} /> {/* Redireciona rotas que não existem */}
+					</Routes>
+				</HashRouter>
+			</ApiKeyContextProvider>
 		</ThemeContextProvider>
 	</React.StrictMode>
 );
