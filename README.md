@@ -26,3 +26,44 @@ Este é um projeto de conversão de moedas desenvolvido em React, que utiliza a 
 4. Após inserir a API Key, clique no botão "Converter moedas" para iniciar a conversão de moedas.
 5. Selecione a moeda alvo e insira o valor a ser convertido no campo de texto.
 6. Clique no botão "Converter" ou "Iniciar conversão automática" para converter o valor.
+
+# A Fazer para a Segunda Parte do Projeto
+
+Com a adição do backend, planejamos implementar as seguintes funcionalidades para melhorar e expandir o sistema:
+
+1. **Histórico de Conversões**
+   - Salvar as conversões realizadas pelo usuário, incluindo:
+     - Data e hora.
+     - Valor em EUR inserido.
+     - Moeda alvo.
+     - Taxa de câmbio utilizada.
+   - Permitir que o usuário visualize e filtre este histórico (por data ou moeda).
+
+2. **Sistema de Usuários e Preferências**
+   - Implementar perfis de usuário que possibilitem:
+     - Salvar moedas favoritas para acesso rápido.
+     - Fazer um novo sistema para moedas favoritas.
+
+3. **Conversão em Lote**
+   - Adicionar funcionalidade para upload de arquivos (como CSV) contendo vários valores para conversão.
+   - Permitir o download dos resultados como arquivo no formato escolhido pelo usuário.
+
+4. **Relatórios Personalizados**
+   - Permitir a geração de relatórios baseados no histórico de conversões:
+     - Exportação para PDF ou Excel.
+     - Visualização de gráficos, como flutuações de taxas de câmbio (usando dados históricos).
+
+5. **Integração com Banco de Dados**
+   - Usar o backend para armazenar:
+     - Histórico de conversões.
+     - Estatísticas de uso (moedas mais convertidas, número total de conversões etc.).
+     - Logs de acesso para fins de auditoria e análise.
+
+6. **API Interna**
+   - Criar uma API interna que permita:
+     - Gerenciar funcionalidades como conversões, acesso ao histórico e configurações de usuário.
+     - Uso por outras aplicações que precisem realizar conversões de moeda.
+
+7. **Controle de Taxas de API**
+   - Implementar um sistema de monitoramento para gerenciar o uso da API do Fixer.io, evitando ultrapassar os limites do plano gratuito.
+   - Cachear as taxas de câmbio no backend para reduzir chamadas repetidas à API.
