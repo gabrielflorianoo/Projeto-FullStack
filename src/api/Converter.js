@@ -10,7 +10,7 @@ async function convertCoin(currency) {
             params: {
                 base: 'EUR',
                 symbols: currency,
-            }
+            },
         });
 
         return response.data;

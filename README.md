@@ -1,4 +1,5 @@
-![](coinvert.png) 
+![](coinvert.png)
+
 # Conversor de Moedas
 
 Este é um projeto de conversão de moedas desenvolvido em React, que utiliza a API de conversão do [Fixer.io](https://fixer.io) para obter a taxa de câmbio mais recente e converter um valor em EUR para uma moeda alvo selecionada pelo usuário. Ele também usa o armazenamento local para guardar a taxa de câmbio e a moeda alvo da última conversão, otimizando o uso da API.
@@ -32,38 +33,44 @@ Este é um projeto de conversão de moedas desenvolvido em React, que utiliza a 
 Com a adição do backend, planejamos implementar as seguintes funcionalidades para melhorar e expandir o sistema:
 
 1. **Histórico de Conversões**
-   - Salvar as conversões realizadas pelo usuário, incluindo:
-     - Data e hora.
-     - Valor em EUR inserido.
-     - Moeda alvo.
-     - Taxa de câmbio utilizada.
-   - Permitir que o usuário visualize e filtre este histórico (por data ou moeda).
+
+    - Salvar as conversões realizadas pelo usuário, incluindo:
+        - Data e hora.
+        - Valor em EUR inserido.
+        - Moeda alvo.
+        - Taxa de câmbio utilizada.
+    - Permitir que o usuário visualize e filtre este histórico (por data ou moeda).
 
 2. **Sistema de Usuários e Preferências**
-   - Implementar perfis de usuário que possibilitem:
-     - Salvar moedas favoritas para acesso rápido.
-     - Fazer um novo sistema para moedas favoritas.
+
+    - Implementar perfis de usuário que possibilitem:
+        - Salvar moedas favoritas para acesso rápido.
+        - Fazer um novo sistema para moedas favoritas.
 
 3. **Conversão em Lote**
-   - Adicionar funcionalidade para upload de arquivos (como CSV) contendo vários valores para conversão.
-   - Permitir o download dos resultados como arquivo no formato escolhido pelo usuário.
+
+    - Adicionar funcionalidade para upload de arquivos (como CSV) contendo vários valores para conversão.
+    - Permitir o download dos resultados como arquivo no formato escolhido pelo usuário.
 
 4. **Relatórios Personalizados**
-   - Permitir a geração de relatórios baseados no histórico de conversões:
-     - Exportação para PDF ou Excel.
-     - Visualização de gráficos, como flutuações de taxas de câmbio (usando dados históricos).
+
+    - Permitir a geração de relatórios baseados no histórico de conversões:
+        - Exportação para PDF ou Excel.
+        - Visualização de gráficos, como flutuações de taxas de câmbio (usando dados históricos).
 
 5. **Integração com Banco de Dados**
-   - Usar o backend para armazenar:
-     - Histórico de conversões.
-     - Estatísticas de uso (moedas mais convertidas, número total de conversões etc.).
-     - Logs de acesso para fins de auditoria e análise.
+
+    - Usar o backend para armazenar:
+        - Histórico de conversões.
+        - Estatísticas de uso (moedas mais convertidas, número total de conversões etc.).
+        - Logs de acesso para fins de auditoria e análise.
 
 6. **API Interna**
-   - Criar uma API interna que permita:
-     - Gerenciar funcionalidades como conversões, acesso ao histórico e configurações de usuário.
-     - Uso por outras aplicações que precisem realizar conversões de moeda.
+
+    - Criar uma API interna que permita:
+        - Gerenciar funcionalidades como conversões, acesso ao histórico e configurações de usuário.
+        - Uso por outras aplicações que precisem realizar conversões de moeda.
 
 7. **Controle de Taxas de API**
-   - Implementar um sistema de monitoramento para gerenciar o uso da API do Fixer.io, evitando ultrapassar os limites do plano gratuito.
-   - Cachear as taxas de câmbio no backend para reduzir chamadas repetidas à API.
+    - Implementar um sistema de monitoramento para gerenciar o uso da API do Fixer.io, evitando ultrapassar os limites do plano gratuito.
+    - Cachear as taxas de câmbio no backend para reduzir chamadas repetidas à API.

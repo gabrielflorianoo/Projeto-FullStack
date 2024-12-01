@@ -29,8 +29,10 @@ const Home = () => {
                     Obrigado por usar nosso serviço!
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
-                    Estamos felizes em saber que você está utilizando nosso serviço de conversão de moedas. <br/> 
-                    Nossa equipe trabalha arduamente para garantir que você tenha a melhor experiência possível.
+                    Estamos felizes em saber que você está utilizando nosso
+                    serviço de conversão de moedas. <br />
+                    Nossa equipe trabalha arduamente para garantir que você
+                    tenha a melhor experiência possível.
                 </Typography>
             </Box>
             <Footer />
@@ -39,4 +41,3 @@ const Home = () => {
 };
 
 export default Home;
-

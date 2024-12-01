@@ -7,30 +7,30 @@ import Footer from './components/Footer';
 import { useThemeContext } from './context/ThemeContext';
 
 const App = () => {
-  const { theme, toggleTheme } = useThemeContext();
+    const { theme, toggleTheme } = useThemeContext();
 
-  return (
-    <Container
-      sx={{
-        bgcolor: 'background.default',
-        color: 'text.primary',
-        height: '100vh',
-        display: 'grid',
-        gap: 2,
-      }}
-      disableGutters
-      maxWidth={false}
-    >
-      {/* Passa a função de alternar tema para o componente Introduction */}
-      <Introduction theme={theme} toggleTheme={toggleTheme} />
+    return (
+        <Container
+            sx={{
+                bgcolor: 'background.default',
+                color: 'text.primary',
+                height: '100vh',
+                display: 'grid',
+                gap: 2,
+            }}
+            disableGutters
+            maxWidth={false}
+        >
+            {/* Passa a função de alternar tema para o componente Introduction */}
+            <Introduction theme={theme} toggleTheme={toggleTheme} />
 
-      {/* Conversor de Moeda */}
-      <Box>
-        <CurrencyConverter />
-      </Box>
-      <Footer />
-    </Container>
-  );
+            {/* Conversor de Moeda */}
+            <Box>
+                <CurrencyConverter />
+            </Box>
+            <Footer />
+        </Container>
+    );
 };
 
 export default App;

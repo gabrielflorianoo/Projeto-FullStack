@@ -2,7 +2,8 @@ import React, { createContext, useState, useContext } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import { useThemeContext } from '../context/ThemeContext';
 
-const saveToLocalStorage = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+const saveToLocalStorage = (key, value) =>
+    localStorage.setItem(key, JSON.stringify(value));
 
 // Cria o contexto para a API Key
 const ApiKeyContext = createContext();
@@ -32,10 +33,10 @@ export const ApiKeyInput = () => {
 
     // Valida a API Key e fecha o modal
     const validateAndClose = () => {
-        if (apiKey !== "") {
+        if (apiKey !== '') {
             setVisible(false);
         } else {
-            alert("Digite uma API Key ou clique fora do modal.");
+            alert('Digite uma API Key ou clique fora do modal.');
         }
     };
 
@@ -79,7 +80,10 @@ export const ApiKeyInput = () => {
                     {/* Caixa do TextField */}
                     <Box
                         sx={{
-                            backgroundColor: theme === 'light' ? 'background.default' : 'background.paper',
+                            backgroundColor:
+                                theme === 'light'
+                                    ? 'background.default'
+                                    : 'background.paper',
                             borderRadius: 2,
                             padding: 2,
                             display: 'flex',
@@ -92,7 +96,10 @@ export const ApiKeyInput = () => {
                     >
                         <TextField
                             sx={{
-                                color: theme === 'light' ? 'text.primary' : 'text.secondary',
+                                color:
+                                    theme === 'light'
+                                        ? 'text.primary'
+                                        : 'text.secondary',
                             }}
                             label="API Key"
                             variant="outlined"
