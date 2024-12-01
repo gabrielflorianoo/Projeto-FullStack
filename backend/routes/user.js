@@ -5,29 +5,33 @@ const {
     createSession,
     findUser,
     getAllUsers,
-} = require('../controllers/UserCotroller.js');
+} = require('../controllers/UserController.js');
 
 const router = Router();
 
-router.post('/', createUser, (_req, res) => {
-    res.status(201).json({ message: 'Usuario registrado com sucesso' });
+router.post('/', (_req, res) => {
+    const [user, error] = createUser(_req, res);
+    if (error) return res.status(500).json({ message: 'Erro ao registrar usuário', error: error.message });
+    res.status(201).json(user);
 });
 
-router.post('/login', logIn, (req, res) => {
-    const [success, error] = createSession(req, res);
-    if (error) return res.status(500).json({ message: 'Erro ao autenticar usuário', error: error.message });
-    if (!success) return res.status(401).json({ message: 'Email ou senha inválidos' });
+router.post('/login', logIn, async (req, res) => {
+    const [success, error] = await createSession(req, res);
+    if (error) res.status(500).json({ message: 'Erro ao autenticar usuário', error: error.message });
+    if (!success) res.status(401).json({ message: 'Email ou senha inválidos' });
     res.status(200).json({ message: 'Login efetuado com sucesso' });
 });
 
-router.get('/', async (req, res) => {
-    const [users, error] = await getAllUsers(req, res);
+router.get('/', async (_req, res) => {
+    const [users, error] = await getAllUsers();
     if (error) return res.status(500).json({ message: 'Erro ao buscar usuários', error: error.message });
     res.json(users);
 });
 
 router.get('/:id', (req, res) => {
-    const user = findUser(req, res);
+    const [user, error] = findUser(req, res);
+    if (error) return res.status(500).json({ message: 'Erro ao buscar usuário', error: error.message });
+    if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
     res.json(user);
 });
 

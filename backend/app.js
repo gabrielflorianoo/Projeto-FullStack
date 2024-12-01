@@ -8,6 +8,7 @@ if (!process.env.DB_USER || !process.env.DB_PASSWORD) {
 const express = require('express');
 const session = require('express-session');
 const userRouter = require('./routes/user');
+const converterRouter = require('./routes/converter');
 require('./db/server');
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(
     }),
 );
 app.use('/users', userRouter);
+app.use('/converter', converterRouter);
 
 app.listen(8000, () => {
     console.log('Servidor rodando na porta 8000');
