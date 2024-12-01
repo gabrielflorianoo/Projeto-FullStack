@@ -1,5 +1,13 @@
 const { UserModel } = require('../db/Models'); // Importa o modelo do Mongoose
 
+/**
+ * Cria uma sessão para o usuário autenticado
+ * 
+ * @param {Object} req - Objeto de requisição contendo o corpo com email e senha do usuário
+ * @param {Object} _res - Objeto de resposta (não utilizado)
+ * @typedef {[boolean, Error]} Tuple - Representa um array onde o primeiro elemento é um booleano indicando se a autenticação foi bem-sucedida e o segundo é um erro se ocorrer
+ * @returns {Tuple} - Retorna um array onde o primeiro elemento é um booleano indicando se a autenticação foi bem-sucedida e o segundo é um erro se ocorrer
+ */
 const createSession = async (req, _res) => {
     const { email, password } = req.body;
 
@@ -16,6 +24,14 @@ const createSession = async (req, _res) => {
     }
 };
 
+/**
+ * Cria um novo usuário no banco de dados
+ * 
+ * @param {Object} req - Objeto de requisição contendo o corpo com nome, email e senha do usuário
+ * @param {Object} res - Objeto de resposta
+ * @typedef {[Object, Error]} Tuple - Representa um array onde o primeiro elemento é o documento do usuário e o segundo é um erro se ocorrer
+ * @returns {Tuple} - Retorna um array onde o primeiro elemento é o documento do usuário encontrado e o segundo é um erro se ocorrer
+ */
 const createUser = async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -25,11 +41,17 @@ const createUser = async (req, res) => {
         await user.save(); // Salva o usuário no banco
         return [user, null];
     } catch (error) {
-        res.status(500).json({ message: 'Erro ao registrar usuário', error });
         return [null, error];
     }
 };
 
+/**
+ * Autentica o usuário e salva o ID na sessão
+ * 
+ * @param {Object} req - Objeto de requisição contendo o corpo com email e senha do usuário
+ * @param {Object} _res - Objeto de resposta (não utilizado)
+ * @param {Function} next - Função de callback para prosseguir com a execução
+ */
 const logIn = async (req, _res, next) => {
     const { email, password } = req.body;
 
@@ -45,6 +67,14 @@ const logIn = async (req, _res, next) => {
     }
 };
 
+/**
+ * Busca um usuário pelo ID no banco de dados
+ * 
+ * @param {Object} req - Objeto de requisição contendo o parâmetro de ID do usuário
+ * @param {Object} _res - Objeto de resposta (não utilizado)
+ * @typedef {[Object, Error]} Tuple - Representa um array onde o primeiro elemento é o documento do usuário encontrado e o segundo é um erro se ocorrer
+ * @returns {Tuple} - Retorna um array onde o primeiro elemento é o documento do usuário encontrado e o segundo é um erro se ocorrer
+*/
 const findUser = async (req, _res) => {
     const userId = req.params.id;
 
@@ -57,6 +87,12 @@ const findUser = async (req, _res) => {
     }
 };
 
+/**
+ * Busca todos os usuários no banco de dados
+ * 
+ * @typedef {[Array, Error]} Tuple - Representa um array onde o primeiro elemento é um array de documentos de usuários e o segundo é um erro se ocorrer
+ * @returns {Tuple} - Retorna um array onde o primeiro elemento é um array de documentos de usuários encontrados e o segundo é um erro se ocorrer
+ */
 const getAllUsers = async () => {
     try {
         // Busca todos os usuários no banco de dados
@@ -67,9 +103,32 @@ const getAllUsers = async () => {
     }
 };
 
+/**
+ * Deleta um usuário pelo ID no banco de dados
+ * 
+ * @param {Object} req - Objeto de requisição contendo o parâmetro de ID do usuário
+ * @param {Object} _res - Objeto de resposta (não utilizado)
+ * @typedef {[Object, Error]} Tuple - Representa um array onde o primeiro elemento é o documento do usuário removido e o segundo é um erro se ocorrer
+ * @returns {Tuple} - Retorna um array onde o primeiro elemento é o documento do usuário removido e o segundo é um erro se ocorrer
+ */
+const deleteUser = async (req, res) => {
+    try {
+        const [user, error] = await findUser(req, res);
+
+        if (error) throw Error('Erro ao buscar usuário');
+        if (!user) throw Error('Usuário nao encontrado');
+
+        await UserModel.findByIdAndDelete(user._id);
+        return [user, null];
+    } catch (error) {
+        return [null, error];
+    }
+};
+
 module.exports = {
     createSession,
     getAllUsers,
+    deleteUser,
     createUser,
     findUser,
     logIn,
