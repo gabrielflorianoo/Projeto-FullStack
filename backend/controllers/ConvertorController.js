@@ -7,9 +7,9 @@ const createConverter = async (req, _res) => {
         const converter = new ConverterModel({ targetCurrency, exchangeRate });
         await converter.save();
 
-        return [success, null];
+        return [true, null];
     } catch (error) {
-        return [null, error];
+        return [false, error];
     }
 };
 
@@ -18,7 +18,20 @@ const getConverterInPeriod = async (req, _res) => {
 
     try {
         const converters = await ConverterModel.find({
+            userId: req.session.userId,
             createdAt: { $gte: startDate, $lt: endDate },
+        });
+
+        return [converters, null];
+    } catch (error) {
+        return [null, error];
+    }
+}
+
+const getAllConverter = async (req, _res) => {
+    try {
+        const converters = await ConverterModel.find({
+            userId: req.session.userId,
         });
 
         return [converters, null];
@@ -29,5 +42,6 @@ const getConverterInPeriod = async (req, _res) => {
 
 module.exports = {
     createConverter,
+    getAllConverter,
     getConverterInPeriod,
 }

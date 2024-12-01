@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema({
 });
 
 const converterSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId, // Referência ao modelo User
+        ref: 'usuarios', // Nome do modelo User
+    },
     targetCurrency: { // Moeda alvo
         type: String,
         required: true,
