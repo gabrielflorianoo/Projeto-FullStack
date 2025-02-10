@@ -19,7 +19,7 @@ export const createUser = async (userData) => {
 export const loginUser = async (credentials) => {
     try {
         const response = await api.post('/users/login', credentials);
-        return response.data;
+        return response;
     } catch (error) {
         console.error('Erro ao fazer login:', error);
         throw error;
@@ -66,6 +66,17 @@ export const createConversion = async (conversionData) => {
         return response.data;
     } catch (error) {
         console.error('Erro ao criar conversão:', error);
+        throw error;
+    }
+};
+
+// Função para obter a sessão do usuário
+export const getSession = async () => {
+    try {
+        const response = await api.get('/users/session');
+        return response.data;
+    } catch (error) {
+        console.error('Erro ao obter sessão:', error);
         throw error;
     }
 };

@@ -25,6 +25,27 @@ const createSession = async (req, _res) => {
 };
 
 /**
+ * Obtém a sessão do usuário autenticado
+ * 
+ * @param {Object} req - Objeto de requisição contendo a sessão do usuário
+ * @param {Object} _res - Objeto de resposta (não utilizado)
+ * @typedef {[Object, Error]} Tuple - Representa um array onde o primeiro elemento é o ID do usuário e o segundo é um erro se ocorrer
+ * @returns {Tuple} - Retorna um array onde o primeiro elemento é o ID do usuário e o segundo é um erro se ocorrer
+ */
+const getSession = async (req, _res) => {
+    try {
+        const userId = req.session.userId;
+        if (userId) {
+            return [userId, null];
+        } else {
+            return [null, new Error('Usuário não autenticado')];
+        }
+    } catch (error) {
+        return [null, error];
+    }
+};
+
+/**
  * Cria um novo usuário no banco de dados
  * 
  * @param {Object} req - Objeto de requisição contendo o corpo com nome, email e senha do usuário
@@ -42,28 +63,6 @@ const createUser = async (req, res) => {
         return [user, null];
     } catch (error) {
         return [null, error];
-    }
-};
-
-/**
- * Autentica o usuário e salva o ID na sessão
- * 
- * @param {Object} req - Objeto de requisição contendo o corpo com email e senha do usuário
- * @param {Object} _res - Objeto de resposta (não utilizado)
- * @param {Function} next - Função de callback para prosseguir com a execução
- */
-const logIn = async (req, _res, next) => {
-    const { email, password } = req.body;
-
-    try {
-        // Busca o usuário pelo email e senha
-        const user = await UserModel.findOne({ email, password });
-        if (user) {
-            req.session.userId = user._id; // Salva o ID do usuário na sessão
-            next();
-        }
-    } catch (error) {
-        console.error(error);
     }
 };
 
@@ -128,8 +127,8 @@ const deleteUser = async (req, res) => {
 module.exports = {
     createSession,
     getAllUsers,
+    getSession,
     deleteUser,
     createUser,
     findUser,
-    logIn,
 };

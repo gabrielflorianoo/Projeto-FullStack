@@ -6,24 +6,30 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import App from './App';
 import Home from './components/Home';
+import Login from './components/Login';
 import Developers from './components/Developers';
 import { ThemeContextProvider } from './context/ThemeContext';
 import { ApiKeyContextProvider } from './context/ApiKeyContext';
+import { AuthProvider } from './context/AuthContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
         <ThemeContextProvider>
             <ApiKeyContextProvider>
-                <HashRouter>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/converter" element={<App />} />
-                        <Route path="/creditos" element={<Developers />} />
-                        <Route path="*" element={<Navigate to="/" />} />{' '}
-                        {/* Redireciona rotas que não existem */}
-                    </Routes>
-                </HashRouter>
+                <AuthProvider>
+                    <HashRouter>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/converter" element={<App />} />
+                            <Route path="/creditos" element={<Developers />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/registrar" element={<Developers />} />
+                            <Route path="*" element={<Navigate to="/" />} />
+                            {/* Redireciona rotas que não existem */}
+                        </Routes>
+                    </HashRouter>
+                </AuthProvider>
             </ApiKeyContextProvider>
         </ThemeContextProvider>
     </React.StrictMode>,

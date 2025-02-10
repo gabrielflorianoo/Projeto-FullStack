@@ -4,7 +4,7 @@ const {
     getAllUsers,
     createUser,
     deleteUser,
-    logIn,
+    getSession,
     findUser,
 } = require('../controllers/UserController.js');
 
@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
     res.status(201).json(user);
 });
 
-router.post('/login', logIn, async (req, res) => {
+router.post('/login', async (req, res) => {
     const [success, error] = await createSession(req, res);
     if (error) return res.status(500).json({ message: 'Erro ao autenticar usuário', error: error.message });
     if (!success) return res.status(401).json({ message: 'Email ou senha inválidos' });
@@ -27,6 +27,13 @@ router.get('/', async (_req, res) => {
     const [users, error] = await getAllUsers();
     if (error) return res.status(500).json({ message: 'Erro ao buscar usuários', error: error.message });
     res.json(users);
+});
+
+router.get('/session', async (req, res) => {
+    const [session, error] = await getSession(req, res);
+    if (error) return res.status(500).json({ message: 'Erro ao buscar sessão', error: error.message });
+    if (!session) return res.status(404).json({ message: 'Sessão não encontrada' });
+    res.json(session);
 });
 
 router.get('/:id', async (req, res) => {

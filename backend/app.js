@@ -5,6 +5,7 @@ if (!process.env.DB_USER || !process.env.DB_PASSWORD) {
     process.exit(1);
 }
 
+const cors = require('cors');
 const express = require('express');
 const session = require('express-session');
 const userRouter = require('./routes/user');
@@ -19,9 +20,10 @@ app.use(
         secret: process.env.SECRET || 'um_segredo_muito_melhor_que_o_anterior',
         saveUninitialized: true,
         resave: false,
-        cookie: {},
     }),
 );
+app.use(cors());
+
 app.use('/users', userRouter);
 app.use('/converter', converterRouter);
 

@@ -1,12 +1,14 @@
 import React from 'react';
-import { Box, Button, Container, Typography } from '@mui/material';
-import { useThemeContext } from '../context/ThemeContext';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { ApiKeyInput } from '../context/ApiKeyContext';
+import { useThemeContext } from '../context/ThemeContext';
+import { Box, Button, Container, Typography } from '@mui/material';
 
 const Introduction = () => {
     const { theme, toggleTheme } = useThemeContext();
     const navigate = useNavigate();
+    const { user, logout } = useAuth();
 
     return (
         <Container
@@ -98,6 +100,35 @@ const Introduction = () => {
                 >
                     {theme === 'light' ? 'Modo Escuro' : 'Modo Claro'}
                 </Button>
+                {user ? (
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        size="large"
+                        onClick={async () => await logout()} // Navega para a página de login
+                    >
+                        Logout
+                    </Button>
+                ) : (
+                    <>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            size="large"
+                            onClick={() => navigate('/login')} // Navega para a página de login
+                        >
+                            Login
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="large"
+                            onClick={() => navigate('/registrar')} // Navega para a página de registro
+                        >
+                            Registrar
+                        </Button></>
+                )
+                }
                 <ApiKeyInput />
             </Box>
         </Container>
