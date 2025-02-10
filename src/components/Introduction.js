@@ -101,14 +101,24 @@ const Introduction = () => {
                     {theme === 'light' ? 'Modo Escuro' : 'Modo Claro'}
                 </Button>
                 {user ? (
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        size="large"
-                        onClick={async () => await logout()} // Navega para a página de login
-                    >
-                        Logout
-                    </Button>
+                    <>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            size="large"
+                            onClick={async () => await logout()} // Navega para a página de login
+                        >
+                            Logout
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="error"
+                            size="large"
+                            onClick={() => navigate('/historico')} // Navega para a página de histórico de conversões
+                        >
+                            Histórico de Conversões
+                        </Button>
+                    </>
                 ) : (
                     <>
                         <Button
