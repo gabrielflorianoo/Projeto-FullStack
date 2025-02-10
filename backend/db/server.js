@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@mycluster.mx39qqa.mongodb.net/Conversor?retryWrites=true&w=majority&appName=MyCluster`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@teste.upiwi.mongodb.net/?retryWrites=true&w=majority&appName=teste`;
 
 mongoose.connect(uri)
     .then(() => console.log('Conectado ao banco de dados'))

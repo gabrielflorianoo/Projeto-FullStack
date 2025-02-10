@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 });
 
-const converterSchema = new mongoose.Schema({
+const currencyConversionSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId, // Referência ao modelo User
         ref: 'usuarios', // Nome do modelo User
@@ -40,7 +40,7 @@ const converterSchema = new mongoose.Schema({
     },
     sourceCurrency: { // Moeda usada para o câmbio
         type: String,
-        required: true,
+        required: false,
         trim: true
     },
     amountUsed: { // Valor usado na conversão
@@ -57,9 +57,9 @@ const converterSchema = new mongoose.Schema({
 
 // Criação dos modelos baseados nos schemas
 const UserModel = mongoose.model('usuarios', userSchema);
-const ConverterModel = mongoose.model('Conversion', converterSchema);
+const CurrencyConverterModel = mongoose.model('Conversion', currencyConversionSchema);
 
 module.exports = {
     UserModel,
-    ConverterModel,
+    CurrencyConverterModel,
 };
