@@ -25,7 +25,7 @@ const getConverterInPeriod = async (req, _res) => {
 
     try {
         const converters = await CurrencyConverterModel.find({
-            userId: req.params.id,
+            userId: req.session.userId,
             createdAt: { $gte: startDate, $lt: endDate },
         });
 
@@ -34,6 +34,45 @@ const getConverterInPeriod = async (req, _res) => {
         return [null, error];
     }
 };
+
+// Função para buscar conversores por moeda
+const getConverterByCurrency = async (req, _res) => {
+    const { currency } = req.body;
+
+    try {
+        const converters = await CurrencyConverterModel.find({
+            userId: req.session.userId,
+            targetCurrency: {
+                $regex: currency,
+                $options: 'i',
+            },
+        });
+
+        return [converters, null];
+    } catch (error) {
+        return [null, error];
+    }
+}
+
+// Função para buscar conversores por taxa de câmbio
+const getConverterByExchangeRate = async (req, _res) => {
+    const { startValue, endValue } = req.body;
+    console.log(startValue, endValue);
+
+    try {
+        const converters = await CurrencyConverterModel.find({
+            userId: req.session.userId,
+            exchangeRate: {
+                $gte: startValue,
+                $lt: endValue,
+            },
+        });
+
+        return [converters, null];
+    } catch (error) {
+        return [null, error];
+    }
+}
 
 // Função para buscar todos os conversores
 const getAllConverter = async (req, _res) => {
@@ -82,6 +121,8 @@ module.exports = {
     createConverter,
     getAllConverter,
     getConverterInPeriod,
+    getConverterByCurrency,
+    getConverterByExchangeRate,
     updateConverter,
     deleteConverter,
 };

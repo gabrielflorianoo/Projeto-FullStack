@@ -95,12 +95,32 @@ export const getAllConversions = async () => {
 };
 
 // Função para buscar conversões por ID de usuário
-export const getConversionsByUserId = async (userId) => {
+export const getConverterInPeriod = async (data) => {
     try {
-        const response = await api.get(`/converter/${userId}`);
+        const response = await api.post(`/converter/byPeriod`, data);
         return response.data;
     } catch (error) {
-        console.log('Erro ao buscar conversões:', error);
+        console.log('Erro ao buscar conversões por período:', error);
+    }
+};
+
+// Função para buscar conversões por moeda
+export const getConverterByCurrency = async (currency) => {
+    try {
+        const response = await api.post('/converter/byCurrency', currency);
+        return response.data;
+    } catch (error) {
+        console.log('Erro ao buscar conversões por moeda:', error);
+    }
+};
+
+// Função para buscar conversões por taxa de câmbio
+export const getConverterByExchangeRate = async (exchangeRate) => {
+    try {
+        const response = await api.post('/converter/byExchangeRate', exchangeRate);
+        return response.data;
+    } catch (error) {
+        console.log('Erro ao buscar conversões por taxa de câmbio:', error);
     }
 };
 
