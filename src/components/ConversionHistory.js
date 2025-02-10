@@ -19,7 +19,7 @@ const ConversionHistory = () => {
                 let data;
                 if (dateFilter.startDate && dateFilter.endDate) {
                     data = await getConverterInPeriod(dateFilter);
-                } if (currency !== '') {
+                } if (currency != '') {
                     data = await getConverterByCurrency(currency);
                 } if (exchangeRate.startValue && exchangeRate.endValue) {
                     data = await getConverterByExchangeRate(exchangeRate);
@@ -49,7 +49,9 @@ const ConversionHistory = () => {
     }
 
     const handleClearFilter = () => {
+        setCurrency('');
         setDateFilter({});
+        setExchangeRate({});
         setLoading(true);
     };
 
@@ -60,14 +62,14 @@ const ConversionHistory = () => {
                     Histórico de Conversões
                 </Typography>
                 <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2} marginBottom={2}>
-                    <Button variant="contained" color="primary" onClick={() => navigate('/new-conversion')}>
+                    <Button variant="contained" color="primary" onClick={() => navigate('/converter')}>
                         Nova Conversão
                     </Button>
                     <Box display="flex" alignItems="center">
                         <Typography variant="body1" marginRight={1}>
                             Filtrar por moeda:
                         </Typography>
-                        <input type="text" value={currency} onChange={(e) => setCurrency(e.target.value)} />
+                        <input type="text" value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} />
                     </Box>
                     <Box display="flex" alignItems="center">
                         <Typography variant="body1" marginRight={1}>

@@ -43,8 +43,7 @@ const getConverterByCurrency = async (req, _res) => {
         const converters = await CurrencyConverterModel.find({
             userId: req.session.userId,
             targetCurrency: {
-                $regex: currency,
-                $options: 'i',
+                $regex: new RegExp(String(currency).trim().toLowerCase(), 'i'),
             },
         });
 
@@ -57,7 +56,6 @@ const getConverterByCurrency = async (req, _res) => {
 // Função para buscar conversores por taxa de câmbio
 const getConverterByExchangeRate = async (req, _res) => {
     const { startValue, endValue } = req.body;
-    console.log(startValue, endValue);
 
     try {
         const converters = await CurrencyConverterModel.find({
