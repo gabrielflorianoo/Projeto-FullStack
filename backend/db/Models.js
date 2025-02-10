@@ -47,10 +47,6 @@ const currencyConversionSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    conversionDate: { // Data da conversão
-        type: Date,
-        default: Date.now
-    }
 }, {
     timestamps: true // Garante que o registro tenha createdAt e updatedAt
 });

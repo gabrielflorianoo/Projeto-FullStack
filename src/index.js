@@ -12,6 +12,7 @@ import Developers from './components/Developers';
 import { ThemeContextProvider } from './context/ThemeContext';
 import { ApiKeyContextProvider } from './context/ApiKeyContext';
 import { AuthProvider } from './context/AuthContext';
+import ConversionHistory from './components/ConversionHistory';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -26,6 +27,7 @@ root.render(
                             <Route path="/creditos" element={<Developers />} />
                             <Route path="/login" element={<Login />} />
                             <Route path="/registrar" element={<Register />} />
+                            <Route path="/historico" element={<ConversionHistory />} />
                             <Route path="*" element={<Navigate to="/" />} />
                             {/* Redireciona rotas que não existem */}
                         </Routes>

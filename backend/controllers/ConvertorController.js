@@ -5,7 +5,7 @@ const createConverter = async (req, _res) => {
     const { targetCurrency, exchangeRate, amountUsed } = req.body;
 
     try {
-        const converter = new CurrencyConverterModel({ targetCurrency, exchangeRate, amountUsed, sourceCurrency: "EUR" });
+        const converter = new CurrencyConverterModel({ targetCurrency, exchangeRate, amountUsed, sourceCurrency: "EUR", userId: req.session.userId });
         await converter.save();
 
         // Atualiza o histórico do usuário para incluir a conversão
