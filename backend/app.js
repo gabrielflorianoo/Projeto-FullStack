@@ -36,10 +36,6 @@ app.use(
     })
 );
 
-app.use((req, res, next) => {
-    console.log("session: ", req.session.userId);
-    next();
-});
 app.use('/users', userRouter);
 app.use('/converter', converterRouter);
 

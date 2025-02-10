@@ -12,6 +12,7 @@ import useLocalStorage from '../hooks/useLocalStorageData';
 import { useApiKeyContext } from '../context/ApiKeyContext';
 import currencyData from '../api/currencies.json';
 import axios from 'axios';
+import { createConversion } from '../api/Backend';
 
 const saveToLocalStorage = (key, value) =>
     localStorage.setItem(key, JSON.stringify(value));
@@ -93,6 +94,14 @@ const CurrencyConverter = () => {
                 // Salva dados no localStorage
                 saveToLocalStorage('conversionRate', rate);
                 saveToLocalStorage('targetCurrency', targetCurrency);
+
+                // Coloca a conversão no histórico
+                await createConversion({
+                    targetCurrency: targetCurrency,
+                    exchangeRate: rate,
+                    amountUsed: amount,
+                });
+
             } catch (error) {
                 // Mensagem de erro customizada
                 if (error.message === 'Erro ao buscar taxa de conversão') {

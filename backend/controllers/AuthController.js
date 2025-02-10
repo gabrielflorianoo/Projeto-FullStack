@@ -1,6 +1,6 @@
 const AuthController = {
     async checkAuth(req, res, next) {
-        if (typeof req.session.user === 'undefined') {
+        if (typeof req.session.userId === 'undefined') {
             return res.status(401).json({ message: 'Usuário não autenticado' });
         }
         next();
