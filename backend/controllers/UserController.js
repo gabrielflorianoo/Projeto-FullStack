@@ -15,12 +15,33 @@ const createSession = async (req, _res) => {
         const user = await UserModel.findOne({ email, password });
         if (user) {
             req.session.userId = user._id;
-            return [true, null]; // Return an array as expected
+            return [req.session.userId, null]; // Return an array as expected
         } else {
-            return [false, null];
+            return [null, null];
         }
     } catch (error) {
         return [null, error]; // Ensure it's an array
+    }
+};
+
+/**
+ * Encerra a sessão do usuário autenticado
+ * 
+ * @param {Object} req - Objeto de requisição contendo a sessão do usuário
+ * @param {Object} _res - Objeto de resposta (não utilizado)
+ * @typedef {[boolean, Error]} Tuple - Representa um array onde o primeiro elemento é um booleano indicando se a operação foi bem-sucedida e o segundo é um erro se ocorrer
+ * @returns {Tuple} - Retorna um array onde o primeiro elemento é um booleano indicando se a operação foi bem-sucedida e o segundo é um erro se ocorrer
+ */
+const logout = async (req, _res) => {
+    try {
+        req.session.destroy((err) => {
+            if (err) {
+                throw err;
+            }
+        });
+        return [true, null];
+    } catch (error) {
+        return [false, error];
     }
 };
 
@@ -38,7 +59,7 @@ const getSession = async (req, _res) => {
         if (userId) {
             return [userId, null];
         } else {
-            return [null, new Error('Usuário não autenticado')];
+            return [null, null];
         }
     } catch (error) {
         return [null, error];
@@ -131,4 +152,5 @@ module.exports = {
     deleteUser,
     createUser,
     findUser,
+    logout,
 };

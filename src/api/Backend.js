@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
     baseURL: 'http://localhost:8000', // URL base do backend
+    withCredentials: true, // Permite enviar cookies com as requisições
 });
 
 // Função para criar um novo usuário
@@ -10,8 +11,7 @@ export const createUser = async (userData) => {
         const response = await api.post('/users', userData);
         return response.data;
     } catch (error) {
-        console.error('Erro ao criar usuário:', error);
-        throw error;
+        console.log('Erro ao criar usuário:', error);
     }
 };
 
@@ -21,8 +21,7 @@ export const loginUser = async (credentials) => {
         const response = await api.post('/users/login', credentials);
         return response;
     } catch (error) {
-        console.error('Erro ao fazer login:', error);
-        throw error;
+        console.log('Erro ao fazer login:', error);
     }
 };
 
@@ -32,8 +31,7 @@ export const getAllUsers = async () => {
         const response = await api.get('/users');
         return response.data;
     } catch (error) {
-        console.error('Erro ao buscar usuários:', error);
-        throw error;
+        console.log('Erro ao buscar usuários:', error);
     }
 };
 
@@ -43,8 +41,7 @@ export const getUserById = async (userId) => {
         const response = await api.get(`/users/${userId}`);
         return response.data;
     } catch (error) {
-        console.error('Erro ao buscar usuário:', error);
-        throw error;
+        console.log('Erro ao buscar usuário:', error);
     }
 };
 
@@ -54,8 +51,7 @@ export const deleteUserById = async (userId) => {
         const response = await api.delete(`/users/${userId}`);
         return response.data;
     } catch (error) {
-        console.error('Erro ao deletar usuário:', error);
-        throw error;
+        console.log('Erro ao deletar usuário:', error);
     }
 };
 
@@ -65,8 +61,7 @@ export const createConversion = async (conversionData) => {
         const response = await api.post('/converter', conversionData);
         return response.data;
     } catch (error) {
-        console.error('Erro ao criar conversão:', error);
-        throw error;
+        console.log('Erro ao criar conversão:', error);
     }
 };
 
@@ -76,10 +71,18 @@ export const getSession = async () => {
         const response = await api.get('/users/session');
         return response.data;
     } catch (error) {
-        console.error('Erro ao obter sessão:', error);
-        throw error;
+        console.log('Erro ao obter sessão:', error);
     }
 };
+
+export const logoutUser = async () => {
+    try {
+        const response = await api.post('/users/logout');
+        return response;
+    } catch (error) {
+        console.log('Erro ao fazer logout:', error);
+    }
+}
 
 // Função para buscar todas as conversões
 export const getAllConversions = async () => {
@@ -87,8 +90,7 @@ export const getAllConversions = async () => {
         const response = await api.get('/converter');
         return response.data;
     } catch (error) {
-        console.error('Erro ao buscar conversões:', error);
-        throw error;
+        console.log('Erro ao buscar conversões:', error);
     }
 };
 
@@ -98,8 +100,7 @@ export const getConversionsByUserId = async (userId) => {
         const response = await api.get(`/converter/${userId}`);
         return response.data;
     } catch (error) {
-        console.error('Erro ao buscar conversões:', error);
-        throw error;
+        console.log('Erro ao buscar conversões:', error);
     }
 };
 
@@ -109,8 +110,7 @@ export const updateConversion = async (conversionId, conversionData) => {
         const response = await api.put(`/converter/${conversionId}`, conversionData);
         return response.data;
     } catch (error) {
-        console.error('Erro ao atualizar conversão:', error);
-        throw error;
+        console.log('Erro ao atualizar conversão:', error);
     }
 };
 
@@ -120,7 +120,6 @@ export const deleteConversion = async (conversionId) => {
         const response = await api.delete(`/converter/${conversionId}`);
         return response.data;
     } catch (error) {
-        console.error('Erro ao deletar conversão:', error);
-        throw error;
+        console.log('Erro ao deletar conversão:', error);
     }
 };

@@ -7,6 +7,7 @@ import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import App from './App';
 import Home from './components/Home';
 import Login from './components/Login';
+import Register from './components/Register';
 import Developers from './components/Developers';
 import { ThemeContextProvider } from './context/ThemeContext';
 import { ApiKeyContextProvider } from './context/ApiKeyContext';
@@ -24,7 +25,7 @@ root.render(
                             <Route path="/converter" element={<App />} />
                             <Route path="/creditos" element={<Developers />} />
                             <Route path="/login" element={<Login />} />
-                            <Route path="/registrar" element={<Developers />} />
+                            <Route path="/registrar" element={<Register />} />
                             <Route path="*" element={<Navigate to="/" />} />
                             {/* Redireciona rotas que não existem */}
                         </Routes>

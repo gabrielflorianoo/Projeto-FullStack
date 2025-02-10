@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser, getSession, createSession } from '../api/Backend';
+import { loginUser, getSession, logoutUser, createUser } from '../api/Backend';
 
 const AuthContext = createContext();
 
@@ -9,11 +9,9 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const userId = localStorage.getItem('userId');
-            if (userId) {
+            const userData = await getSession();
+            if (userData) {
                 try {
-                    const userData = await getSession();
-                    console.log(userData);
                     setUser(userData);
                 } catch (error) {
                     console.error('Erro ao buscar usuário:', error);
@@ -28,28 +26,30 @@ export const AuthProvider = ({ children }) => {
     const login = async (credentials) => {
         try {
             const response = await loginUser(credentials);
-            console.log(response, response.status);
-            if (response.status === 200) {
-                // Criar sessão e salvar o ID do usuário no localStorage
-                const userId = response.data.userId;
-                localStorage.setItem('userId', userId);
-                const userData = await getSession();
-                console.log(userData);
-                setUser(userData);
-            }
+            setUser(response.data.userId);
         } catch (error) {
             console.error('Erro ao fazer login:', error);
             throw error;
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem('userId');
+    const logout = async () => {
+        await logoutUser();
         setUser(null);
     };
 
+    const register = async (credentials) => {
+        try {
+            const response = await createUser(credentials);
+            setUser(response._id);
+        } catch (error) {
+            console.error('Erro ao registrar:', error);
+            throw error;
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, logout, register, loading }}>
             {children}
         </AuthContext.Provider>
     );

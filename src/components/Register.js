@@ -1,23 +1,24 @@
-import { useAuth } from '../context/AuthContext';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useThemeContext } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import { Box, TextField, Button, Typography, Container } from '@mui/material';
 
-const Login = () => {
+const Register = () => {
     const { theme } = useThemeContext();
-    const { login } = useAuth();
+    const { register } = useAuth();
     const navigate = useNavigate();
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleLogin = async () => {
+    const handleRegister = async () => {
         try {
-            await login({ email, password });
-            navigate('/'); // Redireciona para a página inicial
+            await register({ name, email, password });
+            navigate('/'); // Redireciona para a página inicial após o registro
         } catch (err) {
-            setError('Email ou senha inválidos');
+            setError('Erro ao registrar. Por favor, tente novamente.');
         }
     };
 
@@ -46,8 +47,14 @@ const Login = () => {
                     boxShadow: theme === 'light' ? '0 4px 8px rgba(0, 0, 0, 0.1)' : '0 4px 8px rgba(255, 255, 255, 0.1)',
                 }}
             >
-                <Typography variant="h4">Login</Typography>
+                <Typography variant="h4">Registrar</Typography>
                 {error && <Typography color="error">{error}</Typography>}
+                <TextField
+                    label="Nome"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    fullWidth
+                />
                 <TextField
                     label="Email"
                     type="email"
@@ -62,11 +69,11 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     fullWidth
                 />
-                <Button variant="contained" color="primary" onClick={handleLogin}>
-                    Entrar
-                </Button>
-                <Button variant="text" color="secondary" onClick={() => navigate('/registrar')}>
+                <Button variant="contained" color="primary" onClick={handleRegister}>
                     Registrar
+                </Button>
+                <Button variant="text" color="secondary" onClick={() => navigate('/login')}>
+                    Já tem uma conta? Login
                 </Button>
                 <Button variant="text" color="secondary" onClick={() => navigate('/')}>
                     Voltar para o inicio
@@ -76,4 +83,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Register;

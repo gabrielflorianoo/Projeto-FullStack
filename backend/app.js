@@ -10,20 +10,36 @@ const express = require('express');
 const session = require('express-session');
 const userRouter = require('./routes/user');
 const converterRouter = require('./routes/converter');
+const cookieParser = require('cookie-parser');
+
 require('./db/server');
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
+app.use(
+    cors({
+        origin: 'http://localhost:3000', // Ou a URL do seu frontend
+        credentials: true, // Permite cookies e autenticação via sessão
+    })
+);
 app.use(
     session({
-        secret: process.env.SECRET || 'um_segredo_muito_melhor_que_o_anterior',
-        saveUninitialized: true,
+        secret: "meuSegredoSuperSecreto",
         resave: false,
-    }),
+        saveUninitialized: false,
+        cookie: {
+            sameSite: "lax", // Permite cookies em subdomínios
+            maxAge: 1000 * 60 * 60,
+        },
+    })
 );
-app.use(cors());
 
+app.use((req, res, next) => {
+    console.log("session: ", req.session.userId);
+    next();
+});
 app.use('/users', userRouter);
 app.use('/converter', converterRouter);
 
