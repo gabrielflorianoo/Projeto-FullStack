@@ -8,14 +8,14 @@ const Footer = () => {
     return (
         <Box
             sx={{
-                backgroundColor: theme === 'dark' ? '#4A90E2' : '#50E3C2',
+                backgroundColor: theme === 'dark' ? '#000000' : '#4A90E2',
                 textAlign: 'center',
                 color: '#fff',
                 py: 3,
                 mt: 4,
             }}
         >
-            <Typography fontWeight={500}>
+            <Typography fontWeight={300}>
                 © 2024 Conversor de Moedas. Desenvolvido com ❤️ por Robson e
                 Gabriel.
             </Typography>
