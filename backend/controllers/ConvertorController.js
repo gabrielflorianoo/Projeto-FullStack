@@ -104,10 +104,8 @@ const updateConverter = async (req, _res) => {
 
 // Função para deletar um conversor
 const deleteConverter = async (req, _res) => {
-    const { id } = req.body;
-
     try {
-        await CurrencyConverterModel.findByIdAndDelete(id);
+        await CurrencyConverterModel.findByIdAndDelete(req.params.id);
 
         return [true, null];
     } catch (error) {

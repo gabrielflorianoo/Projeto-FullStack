@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Button } from '@mui/material';
-import { getAllConversions, getConverterInPeriod, getConverterByCurrency, getConverterByExchangeRate } from '../api/Backend';
+import { getAllConversions, getConverterInPeriod, getConverterByCurrency, getConverterByExchangeRate, deleteConversion } from '../api/Backend';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,13 +13,14 @@ const ConversionHistory = () => {
     const [conversions, setConversions] = useState([]);
     const [exchangeRate, setExchangeRate] = useState({});
 
+    // Retorna as conversões achadas automaticamente, segundo ou não aos filtros
     useEffect(() => {
         const fetchConversions = async () => {
             try {
                 let data;
                 if (dateFilter.startDate && dateFilter.endDate) {
                     data = await getConverterInPeriod(dateFilter);
-                } if (currency != '') {
+                } if (currency !== '') {
                     data = await getConverterByCurrency(currency);
                 } if (exchangeRate.startValue && exchangeRate.endValue) {
                     data = await getConverterByExchangeRate(exchangeRate);
@@ -69,7 +70,7 @@ const ConversionHistory = () => {
                         <Typography variant="body1" marginRight={1}>
                             Filtrar por moeda:
                         </Typography>
-                        <input type="text" value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} />
+                        <input type="text" value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} placeholder='Nao funciona, nao sei pq' />
                     </Box>
                     <Box display="flex" alignItems="center">
                         <Typography variant="body1" marginRight={1}>
@@ -105,6 +106,7 @@ const ConversionHistory = () => {
                             <TableCell>Taxa de Câmbio</TableCell>
                             <TableCell>Valor Usado</TableCell>
                             <TableCell>Resultado</TableCell>
+                            <TableCell>Opções</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -115,6 +117,18 @@ const ConversionHistory = () => {
                                 <TableCell>{conversion.exchangeRate.toFixed(2)}</TableCell>
                                 <TableCell>{conversion.amountUsed}</TableCell>
                                 <TableCell>{(conversion.amountUsed * conversion.exchangeRate).toFixed(2)}</TableCell>
+                                <TableCell>
+                                    <Button variant="contained" color="secondary" onClick={async () => {
+                                        try {
+                                            await deleteConversion(conversion._id);
+                                            setConversions(conversions.filter(c => c._id !== conversion._id));
+                                        } catch (error) {
+                                            console.error('Erro ao deletar conversão:', error);
+                                        }
+                                    }}>
+                                        Deletar
+                                    </Button>
+                                </TableCell>
                             </TableRow>
                         ))) : (
                             <TableRow>

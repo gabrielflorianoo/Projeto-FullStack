@@ -28,7 +28,7 @@ app.use(
     session({
         secret: "meuSegredoSuperSecreto",
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
         cookie: {
             sameSite: "lax", // Permite cookies em subdomínios
             maxAge: 1000 * 60 * 60,
