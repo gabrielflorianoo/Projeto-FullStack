@@ -124,16 +124,6 @@ export const getConverterByExchangeRate = async (exchangeRate) => {
     }
 };
 
-// Função para atualizar uma conversão
-export const updateConversion = async (conversionId, conversionData) => {
-    try {
-        const response = await api.put(`/converter/${conversionId}`, conversionData);
-        return response.data;
-    } catch (error) {
-        console.log('Erro ao atualizar conversão:', error);
-    }
-};
-
 // Função para deletar uma conversão
 export const deleteConversion = async (conversionId) => {
     try {

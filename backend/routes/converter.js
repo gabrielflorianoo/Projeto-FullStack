@@ -4,7 +4,6 @@ const router = express.Router();
 const { createConverter,
     getConverterInPeriod,
     getAllConverter,
-    updateConverter,
     deleteConverter,
     getConverterByCurrency,
     getConverterByExchangeRate,
@@ -44,13 +43,6 @@ router.post('/', AuthController.checkAuth, async (req, res) => {
     if (error) return res.status(500).json({ message: 'Erro ao criar historico de conversão', error: error.message });
     if (!success) return res.status(500).json({ message: 'Erro ao adicionar conversão ao historico' });
     res.status(201).json({ message: 'Historico de conversão criado com sucesso' });
-});
-
-router.put('/:id', AuthController.checkAuth, async (req, res) => {
-    const [success, error] = await updateConverter(req, res);
-    if (error) return res.status(500).json({ message: 'Erro ao atualizar historico de conversão', error: error.message });
-    if (!success) return res.status(404).json({ message: 'Conversão não encontrada' });
-    res.json({ message: 'Historico de conversão atualizado com sucesso' });
 });
 
 router.delete('/:id', AuthController.checkAuth, async (req, res) => {

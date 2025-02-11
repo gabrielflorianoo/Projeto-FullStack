@@ -85,23 +85,6 @@ const getAllConverter = async (req, _res) => {
     }
 };
 
-// Função para atualizar um conversor existente
-const updateConverter = async (req, _res) => {
-    const { id, targetCurrency, exchangeRate } = req.body;
-
-    try {
-        const converter = await CurrencyConverterModel.findByIdAndUpdate(
-            id,
-            { targetCurrency, exchangeRate },
-            { new: true }
-        );
-
-        return [converter, null];
-    } catch (error) {
-        return [null, error];
-    }
-};
-
 // Função para deletar um conversor
 const deleteConverter = async (req, _res) => {
     try {
@@ -119,6 +102,5 @@ module.exports = {
     getConverterInPeriod,
     getConverterByCurrency,
     getConverterByExchangeRate,
-    updateConverter,
     deleteConverter,
 };
