@@ -27,7 +27,7 @@ const loginLimiter = rateLimit({
 const AuthController = {
     async checkAuth(req, res, next) {
         const authHeader = req.headers.authorization;
-        if (!authHeader || !req.session.token) {
+        if (!authHeader && !req.session.token) {
             logger.info('Tentativa de acesso sem token');
             return res.status(401).json({ message: 'Usuário não autenticado' });
         }
