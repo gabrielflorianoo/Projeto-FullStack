@@ -6,12 +6,12 @@ const createConverter = async (req, _res) => {
     const { targetCurrency, exchangeRate, amountUsed } = req.body;
 
     try {
-        const converter = new CurrencyConverterModel({ targetCurrency, exchangeRate, amountUsed, sourceCurrency: "EUR", userId: req.session.userId });
-        await converter.save();
-
         const token = req.session.token;
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decodedToken.id;
+        
+        const converter = new CurrencyConverterModel({ targetCurrency, exchangeRate, amountUsed, sourceCurrency: "EUR", userId: userId });
+        await converter.save();
 
         // Atualiza o histórico do usuário para incluir a conversão
         const user = await UserModel.findById(userId);
