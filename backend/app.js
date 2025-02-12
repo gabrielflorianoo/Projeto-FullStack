@@ -22,8 +22,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        // origin: 'https://gabrielflorianoo.github.io', // Ou a URL do seu frontend
-        origin: 'http://localhost:3000', // Ou a URL do seu frontend
+        origin: 'https://gabrielflorianoo.github.io', // Ou a URL do seu frontend
+        // origin: 'http://localhost:3000', // Ou a URL do seu frontend
         credentials: true, // Permite cookies e autenticação via sessão
     })
 );
