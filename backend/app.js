@@ -18,22 +18,20 @@ const app = express();
 
 app.set('trust proxy', 1);
 
-app.use(express.json());
-app.use(cookieParser());
 app.use(
     cors({
         origin: 'https://gabrielflorianoo.github.io', // Ou a URL do seu frontend
         credentials: true, // Permite cookies e autenticação via sessão
-        allowedHeaders: ['Content-Type', 'Authorization'],
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     })
 );
+app.use(express.json());
+app.use(cookieParser());
 app.use(session({
     secret: "meuSegredoSuperSecreto",
     resave: false,
     saveUninitialized: false, // Não salva sessões vazias
     cookie: {
-        sameSite: "None", // Necessário para CORS funcionar
+        sameSite: "lax", // Necessário para CORS funcionar
         httpOnly: true, // Impede acesso ao cookie via JavaScript
         secure: true, // Deve ser true na Vercel
         maxAge: 1000 * 60 * 60, // 1 hora
