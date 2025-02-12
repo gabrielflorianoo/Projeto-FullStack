@@ -21,7 +21,7 @@ app.set('trust proxy', 1);
 app.use(
     cors({
         // origin: 'https://gabrielflorianoo.github.io', // Ou a URL do seu frontend
-        origin: 'http://localhost:3000', // Ou a URL do seu frontend
+        origin: '*', // Ou a URL do seu frontend
         credentials: true, // Permite cookies e autenticação via sessão
     })
 );
