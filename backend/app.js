@@ -24,6 +24,8 @@ app.use(
     cors({
         origin: 'https://gabrielflorianoo.github.io', // Ou a URL do seu frontend
         credentials: true, // Permite cookies e autenticação via sessão
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     })
 );
 app.use(session({
