@@ -1,4 +1,5 @@
 const { CurrencyConverterModel, UserModel } = require('../db/Models');
+const jwt = require('jsonwebtoken');
 
 // Função para criar um novo conversor
 const createConverter = async (req, _res) => {
@@ -8,8 +9,12 @@ const createConverter = async (req, _res) => {
         const converter = new CurrencyConverterModel({ targetCurrency, exchangeRate, amountUsed, sourceCurrency: "EUR", userId: req.session.userId });
         await converter.save();
 
+        const token = req.session.token;
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decodedToken.id;
+
         // Atualiza o histórico do usuário para incluir a conversão
-        const user = await UserModel.findById(req.session.userId);
+        const user = await UserModel.findById(userId);
         user.history.push(converter);
         await user.save();
 
@@ -23,9 +28,13 @@ const createConverter = async (req, _res) => {
 const getConverterInPeriod = async (req, _res) => {
     const { startDate, endDate } = req.body;
 
+    const token = req.session.token;
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decodedToken.id;
+
     try {
         const converters = await CurrencyConverterModel.find({
-            userId: req.session.userId,
+            userId: userId,
             createdAt: { $gte: startDate, $lt: endDate },
         });
 
@@ -39,9 +48,13 @@ const getConverterInPeriod = async (req, _res) => {
 const getConverterByCurrency = async (req, _res) => {
     const { currency } = req.body;
 
+    const token = req.session.token;
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decodedToken.id;
+
     try {
         const converters = await CurrencyConverterModel.find({
-            userId: req.session.userId,
+            userId: userId,
             targetCurrency: {
                 $regex: new RegExp(String(currency).trim().toLowerCase(), 'i'),
             },
@@ -57,9 +70,13 @@ const getConverterByCurrency = async (req, _res) => {
 const getConverterByExchangeRate = async (req, _res) => {
     const { startValue, endValue } = req.body;
 
+    const token = req.session.token;
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decodedToken.id;
+
     try {
         const converters = await CurrencyConverterModel.find({
-            userId: req.session.userId,
+            userId: userId,
             exchangeRate: {
                 $gte: startValue,
                 $lt: endValue,
@@ -75,8 +92,13 @@ const getConverterByExchangeRate = async (req, _res) => {
 // Função para buscar todos os conversores
 const getAllConverter = async (req, _res) => {
     try {
+
+        const token = req.session.token;
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decodedToken.id;
+
         const converters = await CurrencyConverterModel.find({
-            userId: req.session.userId,
+            userId: userId,
         });
 
         return [converters, null];
