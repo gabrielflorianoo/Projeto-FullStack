@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    // baseURL: 'https://projeto-full-stack-nine.vercel.app', // URL base do backend
-    baseURL: 'projeto-full-stack-git-arrumando-gabrielflorianoos-projects.vercel.app', // URL base do backend para testes
+    baseURL: 'https://projeto-full-stack-nine.vercel.app', // URL base do backend
+    // baseURL: 'projeto-full-stack-git-arrumando-gabrielflorianoos-projects.vercel.app', // URL base do backend para testes
     withCredentials: true, // Permite enviar cookies com as requisições
 });
 
