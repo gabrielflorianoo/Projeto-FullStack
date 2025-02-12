@@ -114,7 +114,9 @@ const createUser = async (req, _res) => {
         await user.save();
 
         // Cria a sessão para o novo usuário
-        const _ = await createSession(req, _res);
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        req.session.token = token;
+        await req.session.save();
 
         return [user, null];
     } catch (error) {
