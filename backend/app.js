@@ -11,7 +11,6 @@ const session = require('express-session');
 const userRouter = require('./routes/user');
 const converterRouter = require('./routes/converter');
 const cookieParser = require('cookie-parser');
-const FileStore = require('session-file-store')(session);
 
 require('./db/server');
 
@@ -28,7 +27,6 @@ app.use(
     })
 );
 app.use(session({
-    store: new FileStore({ path: "./sessions" }), // Salva as sessões no disco
     secret: "meuSegredoSuperSecreto",
     resave: false,
     saveUninitialized: false, // Não salva sessões vazias
