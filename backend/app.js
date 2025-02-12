@@ -32,9 +32,9 @@ app.use(session({
     resave: false,
     saveUninitialized: false, // Não salva sessões vazias
     cookie: {
-        sameSite: "lax", // Necessário para CORS funcionar
+        sameSite: "None", // Necessário para CORS funcionar
         httpOnly: true, // Impede acesso ao cookie via JavaScript
-        secure: process.env.NODE_ENV === 'production', // Deve ser true na Vercel
+        secure: true, // Deve ser true na Vercel
         maxAge: 1000 * 60 * 60, // 1 hora
     },
 }));
