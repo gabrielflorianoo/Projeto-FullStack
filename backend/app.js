@@ -16,6 +16,8 @@ require('./db/server');
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -27,6 +29,7 @@ app.use(
 app.use(
     session({
         secret: "meuSegredoSuperSecreto",
+        proxy: true,
         resave: false,
         saveUninitialized: true,
         cookie: {
