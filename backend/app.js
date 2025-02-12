@@ -23,7 +23,6 @@ app.use(cookieParser());
 app.use(
     cors({
         origin: 'https://gabrielflorianoo.github.io', // Ou a URL do seu frontend
-        // origin: 'http://localhost:3000', // Ou a URL do seu frontend
         credentials: true, // Permite cookies e autenticação via sessão
     })
 );
@@ -33,9 +32,8 @@ app.use(session({
     saveUninitialized: false, // Não salva sessões vazias
     cookie: {
         sameSite: "None", // Necessário para CORS funcionar
-        // httpOnly: true,
-        // secure: true, // Deve ser true na Vercel
-        secure: true, // apenas para testes
+        httpOnly: true,
+        secure: true, // Deve ser true na Vercel
         maxAge: 1000 * 60 * 60, // 1 hora
     },
 }));
