@@ -1,4 +1,5 @@
 const { UserModel } = require('../db/Models'); // Importa o modelo do Mongoose
+const { body, validationResult } = require('express-validator'); // Importa o body e validationResult do express-validator
 
 /**
  * Cria uma sessão para o usuário autenticado
