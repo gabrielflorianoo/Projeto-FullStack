@@ -21,6 +21,7 @@ app.set('trust proxy', 1);
 app.use(
     cors({
         origin: '*', // Ou a URL do seu frontend
+        credentials: true, // Permite o envio de cookies
     })
 );
 app.use(express.json());
