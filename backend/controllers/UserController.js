@@ -113,6 +113,9 @@ const createUser = async (req, _res) => {
         const user = new UserModel(sanitizedUser);
         await user.save();
 
+        // Cria a sessão para o novo usuário
+        const _ = await createSession(req, _res);
+
         return [user, null];
     } catch (error) {
         return [null, error];
