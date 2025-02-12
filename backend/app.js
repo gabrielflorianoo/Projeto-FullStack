@@ -20,7 +20,7 @@ app.set('trust proxy', 1);
 
 app.use(
     cors({
-        origin: '*', // Ou a URL do seu frontend
+        origin: ['http://localhost:3000', 'https://gabrielflorianoo.github.io/', 'https://gabrielflorianoo.github.io/Projeto-FullStack'], // Ou a URL do seu frontend
         credentials: true, // Permite o envio de cookies
     })
 );
