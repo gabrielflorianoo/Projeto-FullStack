@@ -11,6 +11,7 @@ const session = require('express-session');
 const userRouter = require('./routes/user');
 const converterRouter = require('./routes/converter');
 const cookieParser = require('cookie-parser');
+const FileStore = require('session-file-store')(session);
 
 require('./db/server');
 
@@ -26,18 +27,18 @@ app.use(
         credentials: true, // Permite cookies e autenticação via sessão
     })
 );
-app.use(
-    session({
-        secret: "meuSegredoSuperSecreto",
-        proxy: true,
-        resave: false,
-        saveUninitialized: true,
-        cookie: {
-            maxAge: 1000 * 60 * 60,
-            secure: process.env.NODE_ENV === 'production', // Define secure como true em produção
-        },
-    })
-);
+app.use(session({
+    store: new FileStore({ path: "./sessions" }), // Salva as sessões no disco
+    secret: "meuSegredoSuperSecreto",
+    resave: false,
+    saveUninitialized: false, // Não salva sessões vazias
+    cookie: {
+        sameSite: "None", // Necessário para CORS funcionar
+        httpOnly: true,
+        secure: true, // Deve ser true na Vercel
+        maxAge: 1000 * 60 * 60, // 1 hora
+    },
+}));
 
 app.use('/users', userRouter);
 app.use('/converter', converterRouter);
