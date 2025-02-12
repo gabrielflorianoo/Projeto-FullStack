@@ -33,7 +33,6 @@ app.use(
         resave: false,
         saveUninitialized: true,
         cookie: {
-            sameSite: "lax", // Permite cookies em subdomínios
             maxAge: 1000 * 60 * 60,
             secure: process.env.NODE_ENV === 'production', // Define secure como true em produção
         },
