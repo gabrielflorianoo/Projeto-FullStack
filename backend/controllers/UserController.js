@@ -4,26 +4,33 @@ const { UserModel } = require('../db/Models');
 const { body, validationResult } = require('express-validator');
 const escapeHtml = require('escape-html');
 
-const AuthController = {
-    async checkAuth(req, res, next) {
-        const token = req.headers.authorization;
-        if (!token) {
-            return res.status(401).json({ message: 'Usuário não autenticado' });
-        }
-        
-        try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.userId = decoded.id;
-            next();
-        } catch (error) {
-            return res.status(401).json({ message: 'Token inválido' });
-        }
-    },
+// Middleware para verificar autenticação
+const checkAuth = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ message: 'Usuário não autenticado' });
+    }
+    
+    const token = authHeader.split(" ")[1];
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.userId = decoded.id;
+        next();
+    } catch (error) {
+        return res.status(401).json({ message: 'Token inválido' });
+    }
 };
 
+// Criar sessão (Login)
 const createSession = async (req, res) => {
-    const { email, password } = req.body;
+    await body('email').isEmail().withMessage('E-mail inválido').run(req);
+    await body('password').isLength({ min: 6 }).withMessage('Senha deve ter no mínimo 6 caracteres').run(req);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
+    const { email, password } = req.body;
     try {
         const user = await UserModel.findOne({ email }).select('+password');
         if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
@@ -38,9 +45,17 @@ const createSession = async (req, res) => {
     }
 };
 
+// Criar usuário (Cadastro)
 const createUser = async (req, res) => {
-    const { name, email, password } = req.body;
+    await body('name').trim().notEmpty().withMessage('Nome é obrigatório').run(req);
+    await body('email').isEmail().withMessage('E-mail inválido').run(req);
+    await body('password').isLength({ min: 6 }).withMessage('Senha deve ter no mínimo 6 caracteres').run(req);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
+    const { name, email, password } = req.body;
     try {
         const existingUser = await UserModel.findOne({ email });
         if (existingUser) return res.status(400).json({ message: 'E-mail já cadastrado' });
@@ -63,5 +78,5 @@ const createUser = async (req, res) => {
 module.exports = {
     createSession,
     createUser,
-    checkAuth: AuthController.checkAuth
+    checkAuth
 };
