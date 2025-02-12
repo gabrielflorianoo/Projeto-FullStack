@@ -35,7 +35,7 @@ app.use(session({
         sameSite: "None", // Necessário para CORS funcionar
         // httpOnly: true,
         // secure: true, // Deve ser true na Vercel
-        secure: false, // apenas para testes
+        secure: true, // apenas para testes
         maxAge: 1000 * 60 * 60, // 1 hora
     },
 }));
