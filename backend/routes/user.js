@@ -8,6 +8,7 @@ const {
     findUser,
     logout,
 } = require('../controllers/UserController.js');
+const { destroyToken } = require('../controllers/AuthController.js');
 
 const router = Router();
 
@@ -26,7 +27,8 @@ router.post('/login', async (req, res) => {
 
 router.post('/logout', async (req, res) => {
     const [success, error] = await logout(req, res);
-    if (error) return res.status(500).json({ message: 'Erro ao deslogar', error: error.message });
+    const [_, destroyError] = await destroyToken(req, res);
+    if (error || destroyError) return res.status(500).json({ message: 'Erro ao deslogar', error: error.message });
     if (!success) return res.status(401).json({ message: 'Usuário não autenticado' });
     res.status(200).json({ message: 'Logout efetuado com sucesso' });
 });

@@ -8,19 +8,31 @@ const { UserModel } = require('../db/Models'); // Importa o modelo do Mongoose
  * @typedef {[boolean, Error]} Tuple - Representa um array onde o primeiro elemento é um booleano indicando se a autenticação foi bem-sucedida e o segundo é um erro se ocorrer
  * @returns {Tuple} - Retorna um array onde o primeiro elemento é um booleano indicando se a autenticação foi bem-sucedida e o segundo é um erro se ocorrer
  */
-const createSession = async (req, _res) => {
-    const { email, password } = req.body;
+const createSession = async (req, res) => {
+    await body('email').isEmail().withMessage('E-mail inválido').run(req);
+    await body('password').isLength({ min: 6 }).withMessage('Senha deve ter no mínimo 6 caracteres').run(req);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
+    const { email, password } = req.body;
     try {
-        const user = await UserModel.findOne({ email, password });
-        if (user) {
-            req.session.userId = user._id;
-            return [req.session.userId, null]; // Return an array as expected
-        } else {
-            return [null, null];
-        }
+        const user = await UserModel.findOne({ email }).select('+password');
+        if (!user) return res.status(404).json({ message: 'Usuário não encontrado' });
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(401).json({ message: 'Senha incorreta' });
+
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        
+        // Coloca o token no session
+        req.session.token = token;
+        await req.session.save();
+
+        return res.status(200).json({ token });
     } catch (error) {
-        return [null, error]; // Ensure it's an array
+        return res.status(500).json({ message: 'Erro interno', error: error.message });
     }
 };
 
@@ -55,9 +67,9 @@ const logout = async (req, _res) => {
  */
 const getSession = async (req, _res) => {
     try {
-        const userId = req.session.userId;
-        if (userId) {
-            return [userId, null];
+        const token = req.session.token;
+        if (token) {
+            return [token, null];
         } else {
             return [null, null];
         }
@@ -75,15 +87,31 @@ const getSession = async (req, _res) => {
  * @returns {Tuple} - Retorna um array onde o primeiro elemento é o documento do usuário encontrado e o segundo é um erro se ocorrer
  */
 const createUser = async (req, res) => {
-    const { name, email, password } = req.body;
+    await body('name').trim().notEmpty().withMessage('Nome é obrigatório').run(req);
+    await body('email').isEmail().withMessage('E-mail inválido').run(req);
+    await body('password').isLength({ min: 6 }).withMessage('Senha deve ter no mínimo 6 caracteres').run(req);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
+    const { name, email, password } = req.body;
     try {
-        // Cria um novo documento de usuário no banco de dados
-        const user = new UserModel({ name, email, password });
-        await user.save(); // Salva o usuário no banco
-        return [user, null];
+        const existingUser = await UserModel.findOne({ email });
+        if (existingUser) return res.status(400).json({ message: 'E-mail já cadastrado' });
+
+        const sanitizedUser = {
+            name: escapeHtml(name.trim()),
+            email: escapeHtml(email.trim()),
+            password: await bcrypt.hash(password, 12)
+        };
+
+        const user = new UserModel(sanitizedUser);
+        await user.save();
+
+        return res.status(201).json({ message: 'Usuário criado com sucesso' });
     } catch (error) {
-        return [null, error];
+        return res.status(500).json({ message: 'Erro interno', error: error.message });
     }
 };
 

@@ -26,11 +26,13 @@ const loginLimiter = rateLimit({
 
 const AuthController = {
     async checkAuth(req, res, next) {
-        const token = req.headers.authorization;
-        if (!token) {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !req.session.token) {
             logger.info('Tentativa de acesso sem token');
             return res.status(401).json({ message: 'Usuário não autenticado' });
         }
+
+        const token = req.session.token || authHeader.replace('Bearer ', ''); // Verificar se o token está na sessão
 
         try {
             // Verificar se o token está na blacklist
@@ -42,7 +44,12 @@ const AuthController = {
 
             // Verificar e decodificar token
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.userId = decoded.id;
+            
+            if (!decoded) {
+                logger.warn('Tentativa de uso de token inválido');
+                return res.status(401).json({ message: 'Token inválido' });
+            }
+
             next();
         } catch (error) {
             logger.error('Erro na autenticação: ' + error.message);
@@ -50,13 +57,26 @@ const AuthController = {
         }
     },
 
-    async logout(req, res) {
-        const token = req.headers.authorization;
-        if (token) {
-            await redisClient.set(`blacklist_${token}`, 'revoked', 'EX', 3600); // Expira em 1 hora
+    async destroyToken(req, res) {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(400).json({ message: 'Nenhum token fornecido' });
         }
-        res.status(200).json({ message: 'Logout realizado com sucesso' });
-    }
+
+        const token = authHeader.replace('Bearer ', '') || req.session.token; // Verificar se o token está na sessão
+
+        try {
+            await redisClient.set(`blacklist_${token}`, 'revoked', 'EX', 3600); // Expira em 1 hora
+            req.session.destroy();
+            logger.info(`Token adicionado à blacklist: ${token}`);
+            res.status(200).json({ message: 'Logout realizado com sucesso' });
+        } catch (error) {
+            logger.error('Erro ao adicionar token à blacklist: ' + error.message);
+            res.status(500).json({ message: 'Erro interno ao processar o logout' });
+        }
+    },
+
+    loginLimiter
 };
 
-module.exports = { AuthController, loginLimiter };
+module.exports = AuthController;
