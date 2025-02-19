@@ -39,7 +39,7 @@ app.use(session({
 }));
 
 app.use('/users', userRouter);
-app.use('/converter', converterRouter);
+app.use('/convertions', converterRouter);
 
 app.listen(8000, () => {
     console.log('Servidor rodando na porta 8000');
