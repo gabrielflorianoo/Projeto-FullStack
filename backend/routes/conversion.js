@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const ConvertorController = require('../controllers/ConvertorController.js');
+const ConversionController = require('../controllers/ConversionController.js');
 const AuthController = require('../controllers/AuthController.js');
 
 const handleRequest = async (res, controllerMethod, successMessage) => {
@@ -28,11 +28,11 @@ const handleRequest = async (res, controllerMethod, successMessage) => {
 
 router.use(AuthController.authenticate);
 
-router.post('/byPeriod', (req, res) => handleRequest(res, ConvertorController.getConverterInPeriod(req, res)));
-router.post('/byCurrency', (req, res) => handleRequest(res, ConvertorController.getConverterByCurrency(req, res)));
-router.post('/byExchangeRate', (req, res) => handleRequest(res, ConvertorController.getConverterByExchangeRate(req, res)));
-router.get('/', (req, res) => handleRequest(res, ConvertorController.getAllConverters(req, res)));
-router.post('/', (req, res) => handleRequest(res, ConvertorController.createConverter(req, res), 'Histórico de conversão criado com sucesso'));
-router.delete('/:id', (req, res) => handleRequest(res, ConvertorController.deleteConverter(req, res), 'Histórico de conversão deletado com sucesso'));
+router.post('/byPeriod', (req, res) => handleRequest(res, ConversionController.getConverterInPeriod(req, res)));
+router.post('/byCurrency', (req, res) => handleRequest(res, ConversionController.getConverterByCurrency(req, res)));
+router.post('/byExchangeRate', (req, res) => handleRequest(res, ConversionController.getConverterByExchangeRate(req, res)));
+router.get('/', (req, res) => handleRequest(res, ConversionController.getAllConverters(req, res)));
+router.post('/', (req, res) => handleRequest(res, ConversionController.createConverter(req, res), 'Histórico de conversão criado com sucesso'));
+router.delete('/:id', (req, res) => handleRequest(res, ConversionController.deleteConverter(req, res), 'Histórico de conversão deletado com sucesso'));
 
 module.exports = router;

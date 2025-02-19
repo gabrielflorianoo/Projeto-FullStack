@@ -35,11 +35,11 @@ const createConverter = async (req, res) => {
 const getConverterInPeriod = async (req, res) => {
     try {
         const userId = getUserIdFromToken(req);
-        const { startDate, endDate } = req.query;
+        const { date } = req.body;
         
         const converters = await CurrencyConverterModel.find({
             userId,
-            createdAt: { $gte: new Date(startDate), $lte: new Date(endDate) }
+            createdAt: { $gte: new Date(date.startDate), $lte: new Date(date.endDate) }
         });
 
         res.json(converters);
@@ -52,7 +52,7 @@ const getConverterInPeriod = async (req, res) => {
 const getConverterByCurrency = async (req, res) => {
     try {
         const userId = getUserIdFromToken(req);
-        const { currency } = req.query;
+        const { currency } = req.body;
         
         const converters = await CurrencyConverterModel.find({
             userId,
@@ -69,11 +69,12 @@ const getConverterByCurrency = async (req, res) => {
 const getConverterByExchangeRate = async (req, res) => {
     try {
         const userId = getUserIdFromToken(req);
-        const { minRate, maxRate } = req.query;
+        const { exchangeRate } = req.body;
+        console.log(exchangeRate);
         
         const converters = await CurrencyConverterModel.find({
             userId,
-            exchangeRate: { $gte: parseFloat(minRate), $lte: parseFloat(maxRate) }
+            exchangeRate: { $gte: parseFloat(exchangeRate.startValue), $lte: parseFloat(exchangeRate.endValue) }
         });
 
         res.json(converters);

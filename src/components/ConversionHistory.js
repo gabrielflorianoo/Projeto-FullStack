@@ -20,9 +20,9 @@ const ConversionHistory = () => {
                 let data;
                 if (dateFilter.startDate && dateFilter.endDate) {
                     data = await getConverterInPeriod(dateFilter);
-                } if (currency !== '') {
+                } else if (currency !== '') {
                     data = await getConverterByCurrency(currency);
-                } if (exchangeRate.startValue && exchangeRate.endValue) {
+                } else if (exchangeRate.startValue && exchangeRate.endValue) {
                     data = await getConverterByExchangeRate(exchangeRate);
                 } else {
                     data = await getAllConversions();
@@ -70,7 +70,7 @@ const ConversionHistory = () => {
                         <Typography variant="body1" marginRight={1}>
                             Filtrar por moeda:
                         </Typography>
-                        <input type="text" value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} placeholder='Nao funciona, nao sei pq' />
+                        <input type="text" value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} />
                     </Box>
                     <Box display="flex" alignItems="center">
                         <Typography variant="body1" marginRight={1}>

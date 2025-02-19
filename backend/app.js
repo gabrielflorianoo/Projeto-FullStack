@@ -8,9 +8,10 @@ if (!process.env.DB_USER || !process.env.DB_PASSWORD) {
 const cors = require('cors');
 const express = require('express');
 const session = require('express-session');
-const userRouter = require('./routes/user');
-const converterRouter = require('./routes/converter');
 const cookieParser = require('cookie-parser');
+
+const userRouter = require('./routes/user');
+const converterRouter = require('./routes/conversion');
 
 require('./db/server');
 

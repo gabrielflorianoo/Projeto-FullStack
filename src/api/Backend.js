@@ -10,7 +10,6 @@ const api = axios.create({
 const handleRequest = async (callback) => {
     try {
         const response = await callback();
-        console.log(response.data);
         return response.data;
     } catch (error) {
         console.error('Erro na requisição:', error.response?.data || error.message);
@@ -31,6 +30,6 @@ export const logoutUser = () => handleRequest(() => api.post('/users/logout'));
 export const createConversion = (conversionData) => handleRequest(() => api.post('/convertions', conversionData));
 export const getAllConversions = () => handleRequest(() => api.get('/convertions'));
 export const deleteConversion = (conversionId) => handleRequest(() => api.delete(`/convertions/${conversionId}`));
-export const getConverterInPeriod = (data) => handleRequest(() => api.post('/convertions/byPeriod', data));
-export const getConverterByCurrency = (currency) => handleRequest(() => api.post('/convertions/byCurrency', currency));
-export const getConverterByExchangeRate = (exchangeRate) => handleRequest(() => api.post('/convertions/byExchangeRate', exchangeRate));
+export const getConverterInPeriod = (date) => handleRequest(() => api.post('/convertions/byPeriod', { date }));
+export const getConverterByCurrency = (currency) => handleRequest(() => api.post('/convertions/byCurrency', { currency }));
+export const getConverterByExchangeRate = (exchangeRate) => handleRequest(() => api.post('/convertions/byExchangeRate', { exchangeRate }));
