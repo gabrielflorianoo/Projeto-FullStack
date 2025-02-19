@@ -95,13 +95,6 @@ const CurrencyConverter = () => {
                 saveToLocalStorage('conversionRate', rate);
                 saveToLocalStorage('targetCurrency', targetCurrency);
 
-                // Coloca a conversão no histórico
-                await createConversion({
-                    targetCurrency: targetCurrency,
-                    exchangeRate: rate,
-                    amountUsed: amount,
-                });
-
             } catch (error) {
                 // Mensagem de erro customizada
                 if (error.message === 'Erro ao buscar taxa de conversão') {
@@ -113,6 +106,13 @@ const CurrencyConverter = () => {
                 }
             }
         }
+
+        // Coloca a conversão no histórico
+        await createConversion({
+            targetCurrency: targetCurrency,
+            exchangeRate: conversionRate,
+            amountUsed: amount,
+        });
 
         setLoading(false);
     };

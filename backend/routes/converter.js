@@ -6,11 +6,23 @@ const AuthController = require('../controllers/AuthController.js');
 const handleRequest = async (res, controllerMethod, successMessage) => {
     try {
         const [result, error] = await controllerMethod;
-        if (error) return res.status(500).json({ message: 'Erro no processamento', error: error.message });
-        if (!result || result.length === 0) return res.status(404).json({ message: 'Nenhum dado encontrado' });
-        res.status(successMessage ? 201 : 200).json(successMessage ? { message: successMessage } : result);
+        if (error) {
+            if (!res.headersSent) {
+                return res.status(500).json({ message: 'Erro no processamento', error: error.message });
+            }
+        }
+        if (!result || result.length === 0) {
+            if (!res.headersSent) {
+                return res.status(404).json({ message: 'Nenhum dado encontrado' });
+            }
+        }
+        if (!res.headersSent) {
+            return res.status(successMessage ? 201 : 200).json(successMessage ? { message: successMessage } : result);
+        }
     } catch (err) {
-        res.status(500).json({ message: 'Erro interno', error: err.message });
+        if (!res.headersSent) {
+            res.status(500).json({ message: 'Erro interno', error: err.message });
+        }
     }
 };
 
@@ -19,7 +31,7 @@ router.use(AuthController.authenticate);
 router.post('/byPeriod', (req, res) => handleRequest(res, ConvertorController.getConverterInPeriod(req, res)));
 router.post('/byCurrency', (req, res) => handleRequest(res, ConvertorController.getConverterByCurrency(req, res)));
 router.post('/byExchangeRate', (req, res) => handleRequest(res, ConvertorController.getConverterByExchangeRate(req, res)));
-router.get('/', (req, res) => handleRequest(res, ConvertorController.getAllConverter(req, res)));
+router.get('/', (req, res) => handleRequest(res, ConvertorController.getAllConverters(req, res)));
 router.post('/', (req, res) => handleRequest(res, ConvertorController.createConverter(req, res), 'Histórico de conversão criado com sucesso'));
 router.delete('/:id', (req, res) => handleRequest(res, ConvertorController.deleteConverter(req, res), 'Histórico de conversão deletado com sucesso'));
 
