@@ -14,7 +14,7 @@ const handleRequest = async (res, controllerMethod, successMessage) => {
     }
 };
 
-router.use(AuthController.checkAuth);
+router.use(AuthController.authenticate);
 
 router.post('/byPeriod', (req, res) => handleRequest(res, ConvertorController.getConverterInPeriod(req, res)));
 router.post('/byCurrency', (req, res) => handleRequest(res, ConvertorController.getConverterByCurrency(req, res)));

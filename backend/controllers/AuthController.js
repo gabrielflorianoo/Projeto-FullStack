@@ -66,4 +66,4 @@ class AuthController {
     }
 }
 
-module.exports = { AuthController, loginLimiter };
+module.exports = AuthController;

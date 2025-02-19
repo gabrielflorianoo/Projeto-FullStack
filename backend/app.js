@@ -32,8 +32,7 @@ app.use(session({
     saveUninitialized: false, // Não salva sessões vazias
     cookie: {
         sameSite: "none", // Necessário para CORS funcionar em SPA
-        // Impede acesso ao cookie via JavaScript
-        secure: true, // Deve ser true na Vercel
+        secure: false, // Deve ser true na Vercel
         maxAge: 1000 * 60 * 60 * 3,
     },
 }));
