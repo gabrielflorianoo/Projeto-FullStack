@@ -5,6 +5,9 @@ const jwt = require('jsonwebtoken');
 const createConverter = async (req, _res) => {
     const { targetCurrency, exchangeRate, amountUsed } = req.body;
 
+    if (!req.session.userId) return [false, "Usuário não autenticado."];
+    if (!targetCurrency || !exchangeRate || !amountUsed) return [false, "Dados inválidos."];
+
     try {
         const token = req.session.token;
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
@@ -20,7 +23,7 @@ const createConverter = async (req, _res) => {
 
         return [true, null];
     } catch (error) {
-        return [false, error];
+        return [false, error.message];
     }
 };
 
@@ -40,7 +43,7 @@ const getConverterInPeriod = async (req, _res) => {
 
         return [converters, null];
     } catch (error) {
-        return [null, error];
+        return [null, error.message];
     }
 };
 
@@ -62,9 +65,9 @@ const getConverterByCurrency = async (req, _res) => {
 
         return [converters, null];
     } catch (error) {
-        return [null, error];
+        return [null, error.message];
     }
-}
+};
 
 // Função para buscar conversores por taxa de câmbio
 const getConverterByExchangeRate = async (req, _res) => {
@@ -85,9 +88,9 @@ const getConverterByExchangeRate = async (req, _res) => {
 
         return [converters, null];
     } catch (error) {
-        return [null, error];
+        return [null, error.message];
     }
-}
+};
 
 // Função para buscar todos os conversores
 const getAllConverter = async (req, _res) => {
@@ -101,20 +104,26 @@ const getAllConverter = async (req, _res) => {
             userId: userId,
         });
 
+    try {
+        const converters = await CurrencyConverterModel.find({ userId: req.session.userId }).lean();
         return [converters, null];
     } catch (error) {
-        return [null, error];
+        return [null, error.message];
     }
 };
 
 // Função para deletar um conversor
 const deleteConverter = async (req, _res) => {
-    try {
-        await CurrencyConverterModel.findByIdAndDelete(req.params.id);
+    if (!req.session.userId) return [false, "Usuário não autenticado."];
 
+    try {
+        const converter = await CurrencyConverterModel.findById(req.params.id);
+        if (!converter) return [false, "Conversor não encontrado."];
+
+        await CurrencyConverterModel.findByIdAndDelete(req.params.id);
         return [true, null];
     } catch (error) {
-        return [false, error];
+        return [false, error.message];
     }
 };
 

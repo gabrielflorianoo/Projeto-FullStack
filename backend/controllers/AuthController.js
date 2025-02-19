@@ -79,4 +79,4 @@ const AuthController = {
     loginLimiter
 };
 
-module.exports = AuthController;
+module.exports = { AuthController, loginLimiter };

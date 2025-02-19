@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useThemeContext } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
-import { Box, TextField, Button, Typography, Container } from '@mui/material';
+import { Box, TextField, Button, Typography, Container, Alert } from '@mui/material';
 
 const Register = () => {
     const { theme } = useThemeContext();
@@ -12,13 +12,17 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     const handleRegister = async () => {
         try {
             await register({ name, email, password });
-            navigate('/'); // Redireciona para a página inicial após o registro
+            setSuccessMessage('Conta registrada com sucesso! Redirecionando...');
+            setError('');
+            setTimeout(() => navigate('/'), 3000); // Redireciona após 3 segundos
         } catch (err) {
             setError('Erro ao registrar. Por favor, tente novamente.');
+            setSuccessMessage('');
         }
     };
 
@@ -48,7 +52,8 @@ const Register = () => {
                 }}
             >
                 <Typography variant="h4">Registrar</Typography>
-                {error && <Typography color="error">{error}</Typography>}
+                {error && <Alert severity="error">{error}</Alert>}
+                {successMessage && <Alert severity="success">{successMessage}</Alert>}
                 <TextField
                     label="Nome"
                     value={name}
@@ -76,7 +81,7 @@ const Register = () => {
                     Já tem uma conta? Login
                 </Button>
                 <Button variant="text" color="secondary" onClick={() => navigate('/')}>
-                    Voltar para o inicio
+                    Voltar para o início
                 </Button>
             </Box>
         </Container>

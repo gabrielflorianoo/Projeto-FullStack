@@ -1,61 +1,46 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        match: [/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome inválido']
     },
     email: {
         type: String,
         required: true,
         unique: true,
-        trim: true
+        trim: true,
+        lowercase: true // Garante que todos os e-mails sejam armazenados em minúsculas
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        minlength: 6
     },
     history: [{
-        type: mongoose.Schema.Types.ObjectId, // Referência ao modelo Converter
-        ref: 'Conversion', // Nome do modelo Converter
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Conversion',
     }],
 }, {
     timestamps: true
 });
 
-const currencyConversionSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId, // Referência ao modelo User
-        ref: 'usuarios', // Nome do modelo User
-    },
-    targetCurrency: { // Moeda alvo
-        type: String,
-        required: true,
-        trim: true
-    },
-    exchangeRate: { // Taxa de câmbio
-        type: Number,
-        required: true
-    },
-    sourceCurrency: { // Moeda usada para o câmbio
-        type: String,
-        required: false,
-        trim: true
-    },
-    amountUsed: { // Valor usado na conversão
-        type: Number,
-        required: true
-    },
-}, {
-    timestamps: true // Garante que o registro tenha createdAt e updatedAt
+userSchema.pre('save', async function (next) {
+    if (!this.isModified('password') || this.password.startsWith('$2b$')) return next();
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
 
-// Criação dos modelos baseados nos schemas
 const UserModel = mongoose.model('usuarios', userSchema);
-const CurrencyConverterModel = mongoose.model('Conversion', currencyConversionSchema);
 
 module.exports = {
-    UserModel,
-    CurrencyConverterModel,
+    UserModel
 };
