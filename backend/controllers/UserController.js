@@ -4,17 +4,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const escapeHtml = require('escape-html');
 
-// Função para extrair o ID do usuário a partir do token
-const getUserIdFromToken = (req) => {
-    if (!req.session.token) return null;
-    try {
-        const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET);
-        return decoded.id;
-    } catch (error) {
-        return null;
-    }
-};
-
 const createSession = async (req, res) => {
     await body('email').isEmail().run(req);
     await body('password').isLength({ min: 6 }).run(req);
@@ -28,10 +17,13 @@ const createSession = async (req, res) => {
             return res.status(401).json({ error: 'Credenciais inválidas' });
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ user: user }, process.env.JWT_SECRET, { expiresIn: '1h' });
         req.session.token = token;
         await req.session.save();
-        return res.json({ token });
+
+        const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET);
+        return res.json({ token: decoded });
+
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
@@ -49,8 +41,16 @@ const logout = async (req, res) => {
 };
 
 const getSession = async (req, res) => {
-    const token = req.session.token || null;
-    return res.json({ token });
+    try {
+        if (req.session.token) {
+            const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET);
+            return res.json({ token: decoded });
+        }
+
+        return res.status(201).json({ error: 'Sessão não encontrada' });
+    } catch (error) {
+        return res.status(401).json({ error: 'Token inválido ou expirado' });
+    }
 };
 
 const createUser = async (req, res) => {
@@ -65,7 +65,7 @@ const createUser = async (req, res) => {
         if (await UserModel.findOne({ email })) {
             return res.status(400).json({ error: 'E-mail já cadastrado' });
         }
-        
+
         const user = new UserModel({
             name: escapeHtml(name.trim()),
             email: escapeHtml(email.trim()),
@@ -73,11 +73,12 @@ const createUser = async (req, res) => {
         });
         await user.save();
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ user: user }, process.env.JWT_SECRET, { expiresIn: '1h' });
         req.session.token = token;
         await req.session.save();
 
-        return res.json({ user });
+        const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET);
+        return res.json({ token: decoded });
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }

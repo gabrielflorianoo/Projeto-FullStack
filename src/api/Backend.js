@@ -10,6 +10,7 @@ const api = axios.create({
 const handleRequest = async (callback) => {
     try {
         const response = await callback();
+        console.log(response.data);
         return response.data;
     } catch (error) {
         console.error('Erro na requisição:', error.response?.data || error.message);

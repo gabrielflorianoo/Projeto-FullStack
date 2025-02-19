@@ -9,13 +9,12 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const userData = await getSession();
-            if (userData) {
-                try {
-                    setUser(userData);
-                } catch (error) {
-                    console.error('Erro ao buscar usuário:', error);
-                }
+            const session = await getSession();
+        if (session.token) {
+                setUser(session.token.user);
+            } else {
+                setUser(null);
+                console.log('Usuário não autenticado');
             }
             setLoading(false);
         };
@@ -26,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (credentials) => {
         try {
             const response = await loginUser(credentials);
-            setUser(response.data.userId);
+            setUser(response.token.user);
         } catch (error) {
             console.error('Erro ao fazer login:', error);
             throw error;
@@ -41,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     const register = async (credentials) => {
         try {
             const response = await createUser(credentials);
-            setUser(response._id);
+            setUser(response.token.user);
         } catch (error) {
             console.error('Erro ao registrar:', error);
             throw error;

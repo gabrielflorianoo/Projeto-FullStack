@@ -16,12 +16,13 @@ const Register = () => {
 
     const handleRegister = async () => {
         try {
-            await register({ name, email, password });
+            const response = await register({ name, email, password });
             setSuccessMessage('Conta registrada com sucesso! Redirecionando...');
             setError('');
             setTimeout(() => navigate('/'), 3000); // Redireciona após 3 segundos
         } catch (err) {
-            setError('Erro ao registrar. Por favor, tente novamente.');
+            console.log(err)
+            setError('Erro ao registrar. ' + err.response?.data.error || err.message);
             setSuccessMessage('');
         }
     };
