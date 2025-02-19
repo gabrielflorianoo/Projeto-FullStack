@@ -120,12 +120,74 @@ const createUser = async (req, _res) => {
 
         return [user, null];
     } catch (error) {
-        return res.status(500).json({ message: 'Erro interno', error: error.message });
+        return [null, error];
+    }
+};
+
+/**
+ * Busca um usuário pelo ID no banco de dados
+ * 
+ * @param {Object} req - Objeto de requisição contendo o parâmetro de ID do usuário
+ * @param {Object} _res - Objeto de resposta (não utilizado)
+ * @typedef {[Object, Error]} Tuple - Representa um array onde o primeiro elemento é o documento do usuário encontrado e o segundo é um erro se ocorrer
+ * @returns {Tuple} - Retorna um array onde o primeiro elemento é o documento do usuário encontrado e o segundo é um erro se ocorrer
+*/
+const findUser = async (req, _res) => {
+    const userId = req.params.id;
+
+    try {
+        // Busca o usuário pelo ID no banco de dados
+        const user = await UserModel.findById(userId);
+        return [user, null];
+    } catch (error) {
+        return [null, error];
+    }
+};
+
+/**
+ * Busca todos os usuários no banco de dados
+ * 
+ * @typedef {[Array, Error]} Tuple - Representa um array onde o primeiro elemento é um array de documentos de usuários e o segundo é um erro se ocorrer
+ * @returns {Tuple} - Retorna um array onde o primeiro elemento é um array de documentos de usuários encontrados e o segundo é um erro se ocorrer
+ */
+const getAllUsers = async () => {
+    try {
+        // Busca todos os usuários no banco de dados
+        const users = await UserModel.find({});
+        return [users, null];
+    } catch (error) {
+        return [null, error];
+    }
+};
+
+/**
+ * Deleta um usuário pelo ID no banco de dados
+ * 
+ * @param {Object} req - Objeto de requisição contendo o parâmetro de ID do usuário
+ * @param {Object} _res - Objeto de resposta (não utilizado)
+ * @typedef {[Object, Error]} Tuple - Representa um array onde o primeiro elemento é o documento do usuário removido e o segundo é um erro se ocorrer
+ * @returns {Tuple} - Retorna um array onde o primeiro elemento é o documento do usuário removido e o segundo é um erro se ocorrer
+ */
+const deleteUser = async (req, res) => {
+    try {
+        const [user, error] = await findUser(req, res);
+
+        if (error) throw Error('Erro ao buscar usuário');
+        if (!user) throw Error('Usuário nao encontrado');
+
+        await UserModel.findByIdAndDelete(user._id);
+        return [user, null];
+    } catch (error) {
+        return [null, error];
     }
 };
 
 module.exports = {
     createSession,
+    getAllUsers,
+    getSession,
+    deleteUser,
     createUser,
-    checkAuth
+    findUser,
+    logout,
 };
