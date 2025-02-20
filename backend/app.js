@@ -10,7 +10,7 @@ const redis = require('redis');
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-const RedisStore = require("connect-redis").default;
+const {RedisStore} = require("connect-redis");
 
 const userRouter = require('./routes/user');
 const converterRouter = require('./routes/conversion');
