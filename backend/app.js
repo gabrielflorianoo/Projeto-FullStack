@@ -30,10 +30,10 @@ app.use(cookieParser());
 app.use(session({
     secret: "meuSegredoSuperSecreto",
     resave: false,
-    saveUninitialized: true, // Não salva sessões vazias
+    saveUninitialized: false, // Não salva sessões vazias
     cookie: {
         sameSite: "lax", // Necessário para CORS funcionar em SPA
-        secure: false, // Deve ser true na Vercel
+        secure: true, // Deve ser true na Vercel
         maxAge: 1000 * 60 * 60 * 3,
     },
 }));
