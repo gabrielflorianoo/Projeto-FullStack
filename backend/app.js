@@ -17,6 +17,9 @@ const converterRouter = require('./routes/conversion');
 
 const redisClient = redis.createClient({ url: process.env.REDIS_URL });
 
+redisClient.on('error', (err) => console.error('Erro no Redis:', err));
+redisClient.connect();
+
 require('./db/server');
 
 const app = express();
