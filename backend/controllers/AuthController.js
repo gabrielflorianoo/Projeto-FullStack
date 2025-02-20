@@ -1,11 +1,6 @@
 const jwt = require('jsonwebtoken');
-const redis = require('redis');
 const rateLimit = require('express-rate-limit');
 const winston = require('winston');
-require('dotenv').config();
-
-const redisClient = redis.createClient({ url: process.env.REDIS_URL });
-redisClient.connect().catch(console.error);
 
 const logger = winston.createLogger({
     level: 'info',
@@ -32,12 +27,6 @@ class AuthController {
         const token = req.session.token || authHeader.replace('Bearer ', '');
 
         try {
-            const isRevoked = await redisClient.get(`blacklist_${token}`);
-            if (isRevoked) {
-                logger.warn('Tentativa de uso de token revogado');
-                return res.status(401).json({ error: 'Token inválido' });
-            }
-
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
             if (!decoded) {
                 logger.error('Erro ao decodificar token');
@@ -63,7 +52,6 @@ class AuthController {
         const token = authHeader.replace('Bearer ', '');
 
         try {
-            await redisClient.set(`blacklist_${token}`, 'revoked', 'EX', 3600);
             logger.info(`Token adicionado à blacklist: ${token}`);
             res.status(200).json({ message: 'Logout realizado com sucesso' });
         } catch (error) {

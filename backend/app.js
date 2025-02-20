@@ -6,12 +6,15 @@ if (!process.env.DB_USER || !process.env.DB_PASSWORD) {
 }
 
 const cors = require('cors');
+const redis = require('redis');
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 
 const userRouter = require('./routes/user');
 const converterRouter = require('./routes/conversion');
+
+const redisClient = redis.createClient({ url: process.env.REDIS_URL });
 
 require('./db/server');
 
@@ -28,6 +31,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({
+    store: new RedisStore({ client: redisClient }),
     secret: "meuSegredoSuperSecreto",
     resave: false,
     saveUninitialized: false, // Não salva sessões vazias
