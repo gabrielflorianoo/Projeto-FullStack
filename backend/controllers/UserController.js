@@ -40,11 +40,11 @@ const createSession = async (req, res) => {
 
 const logout = async (req, res) => {
     try {
+        await SessionModel.findByIdAndDelete(req.session.id);
         await new Promise((resolve, reject) => {
             req.session.destroy((err) => (err ? reject(err) : resolve()));
         });
 
-        await SessionModel.findByIdAndDelete(req.session.id);
         return res.json({ success: true });
     } catch (error) {
         return res.status(500).json({ error: error.message });
