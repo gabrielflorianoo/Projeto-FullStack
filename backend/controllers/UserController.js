@@ -1,4 +1,4 @@
-const { UserModel } = require('../db/Models');
+const { UserModel, SessionModel } = require('../db/Models');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -19,9 +19,18 @@ const createSession = async (req, res) => {
 
         const token = jwt.sign({ user: user }, process.env.JWT_SECRET, { expiresIn: '1h' });
         req.session.token = token;
-        await req.session.save();
+        
+        // Salva o token da sessão no MongoDB
+        const sessionData = {
+            _id: `${req.session.id}`,
+            token: req.session.token,
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 3), // Expira em 3 horas
+        };
 
-        const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET);
+        const session = new SessionModel(sessionData);
+        await session.save();
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         return res.json({ token: decoded });
 
     } catch (error) {
@@ -34,6 +43,8 @@ const logout = async (req, res) => {
         await new Promise((resolve, reject) => {
             req.session.destroy((err) => (err ? reject(err) : resolve()));
         });
+
+        await SessionModel.findByIdAndDelete(req.session.id);
         return res.json({ success: true });
     } catch (error) {
         return res.status(500).json({ error: error.message });
@@ -42,9 +53,19 @@ const logout = async (req, res) => {
 
 const getSession = async (req, res) => {
     try {
-        if (req.session.token) {
-            const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET);
-            return res.json({ token: decoded });
+        const session = await SessionModel.findById(req.session.id);
+
+        console.log("Token: ", session.token); // Agora deve funcionar
+
+        if (session) {
+            if (session.expires > Date.now()) {
+                const decoded = jwt.verify(session.token, process.env.JWT_SECRET);
+                return res.json({ token: decoded });
+            } else {
+                // Deleta a sessão já expirada
+                await SessionModel.findByIdAndDelete(req.session.id);
+                return res.status(401).json({ error: 'Sessão expirada' });
+            }
         }
 
         return res.status(201).json({ error: 'Sessão não encontrada' });
@@ -75,7 +96,16 @@ const createUser = async (req, res) => {
 
         const token = jwt.sign({ user: user }, process.env.JWT_SECRET, { expiresIn: '1h' });
         req.session.token = token;
-        await req.session.save();
+        
+        // Salva o token da sessão no MongoDB
+        const sessionData = {
+            _id: `${req.session.id}`,
+            token: req.session.token,
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 3), // Expira em 3 horas
+        };
+
+        const session = new SessionModel(sessionData);
+        await session.save();
 
         const decoded = jwt.verify(req.session.token, process.env.JWT_SECRET);
         return res.json({ token: decoded });

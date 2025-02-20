@@ -51,11 +51,19 @@ const currencyConversionSchema = new mongoose.Schema({
     timestamps: true // Garante que o registro tenha createdAt e updatedAt
 });
 
+const SessionSchema = new mongoose.Schema({
+    _id: String, // ID da sessão gerado pelo `connect-mongo`
+    token: String,
+    expires: Date, // Data de expiração
+}, { collection: "sessions" }); // Certifique-se de usar a coleção correta
+
 // Criação dos modelos baseados nos schemas
 const UserModel = mongoose.model('usuarios', userSchema);
 const CurrencyConverterModel = mongoose.model('Conversion', currencyConversionSchema);
+const SessionModel = mongoose.model("Session", SessionSchema);
 
 module.exports = {
     UserModel,
+    SessionModel,
     CurrencyConverterModel,
 };
