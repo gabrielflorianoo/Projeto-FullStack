@@ -10,7 +10,7 @@ const redis = require('redis');
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-const {RedisStore} = require("connect-redis");
+const MongoStore = require('connect-mongo');
 
 const userRouter = require('./routes/user');
 const converterRouter = require('./routes/conversion');
@@ -35,7 +35,10 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use(session({
-    store: new RedisStore({ client: redisClient }),
+    store: MongoStore.create({
+        mongoUrl: `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@teste.upiwi.mongodb.net/?retryWrites=true&w=majority&appName=teste`, // URL do seu banco MongoDB
+        ttl: 60 * 60 * 3, // Tempo de vida da sessão (3h)
+    }),
     secret: "meuSegredoSuperSecreto",
     resave: false,
     saveUninitialized: false, // Não salva sessões vazias
