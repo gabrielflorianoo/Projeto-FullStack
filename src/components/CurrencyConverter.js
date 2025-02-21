@@ -54,6 +54,7 @@ const CurrencyConverter = () => {
     // Função para converter moedas
     const handleConvert = async () => {
         setLoading(true);
+        let rate = savedConversionRate;
 
         // Usa taxa salva no localStorage se possível
         if (conversionRate && savedTargetCurrency === targetCurrency) {
@@ -84,7 +85,7 @@ const CurrencyConverter = () => {
                     }
                 }
 
-                const rate = data.rates[targetCurrency];
+                rate = data.rates[targetCurrency];
                 setConversionRate(rate);
                 const conversion = amount * rate;
                 setResult(conversion.toFixed(2));
@@ -110,7 +111,7 @@ const CurrencyConverter = () => {
         // Coloca a conversão no histórico
         await createConversion({
             targetCurrency: targetCurrency,
-            exchangeRate: conversionRate,
+            exchangeRate: rate,
             amountUsed: amount,
         });
 

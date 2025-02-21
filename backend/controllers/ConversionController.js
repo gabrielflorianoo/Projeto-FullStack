@@ -1,8 +1,6 @@
 const { CurrencyConverterModel, UserModel } = require('../db/Models');
 const jwt = require('jsonwebtoken');
-
-// Chache para armazenar o histórico do usuário
-const cache = new Map();
+const { promisify } = require('util');
 
 // Middleware para extrair usuário do token
 const getUserIdFromToken = (req) => {
@@ -11,6 +9,10 @@ const getUserIdFromToken = (req) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     return decoded.userId;
 };
+
+// Deixa o cliente Redis disponível para uso assíncrono
+const getAsync = promisify(redisClient.get).bind(redisClient);
+const setAsync = promisify(redisClient.set).bind(redisClient);
 
 // Criar um novo conversor
 const createConverter = async (req, res) => {
@@ -41,8 +43,11 @@ const getConverterInPeriod = async (req, res) => {
         const { date } = req.body;
 
         const cacheKey = `${userId}-${date.startDate}-${date.endDate}`;
-        if (cache.has(cacheKey)) {
-            return res.json(cache.get(cacheKey));
+        if (req.redisClient) {
+            const cachedData = await getAsync(cacheKey);
+            if (cachedData) {
+                return res.json(JSON.parse(cachedData));
+            }
         }
 
         const converters = await CurrencyConverterModel.find({
@@ -50,7 +55,9 @@ const getConverterInPeriod = async (req, res) => {
             createdAt: { $gte: new Date(date.startDate), $lte: new Date(date.endDate) }
         });
 
-        cache.set(cacheKey, converters);
+        if (req.redisClient) {
+            await setAsync(cacheKey, JSON.stringify(converters), 'EX', 60 * 5);
+        }
         res.json(converters);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -64,8 +71,11 @@ const getConverterByCurrency = async (req, res) => {
         const { currency } = req.body;
 
         const cacheKey = `${userId}-${currency}`;
-        if (cache.has(cacheKey)) {
-            return res.json(cache.get(cacheKey));
+        if (req.redisClient) {
+            const cachedData = await getAsync(cacheKey);
+            if (cachedData) {
+                return res.json(JSON.parse(cachedData));
+            }
         }
         
         const converters = await CurrencyConverterModel.find({
@@ -73,6 +83,9 @@ const getConverterByCurrency = async (req, res) => {
             targetCurrency: { $regex: new RegExp(currency, 'i') }
         });
 
+        if (req.redisClient) {
+            await setAsync(cacheKey, JSON.stringify(converters), 'EX', 60 * 5);
+        }
         res.json(converters);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -86,15 +99,21 @@ const getConverterByExchangeRate = async (req, res) => {
         const { exchangeRate } = req.body;
         
         const cacheKey = `${userId}-${exchangeRate.startValue}-${exchangeRate.endValue}`;
-        if (cache.has(cacheKey)) {
-            return res.json(cache.get(cacheKey));
+        if (req.redisClient) {
+            const cachedData = await getAsync(cacheKey);
+            if (cachedData) {
+                return res.json(JSON.parse(cachedData));
+            }
         }
-        
+
         const converters = await CurrencyConverterModel.find({
             userId,
             exchangeRate: { $gte: parseFloat(exchangeRate.startValue), $lte: parseFloat(exchangeRate.endValue) }
         });
 
+        if (req.redisClient) {
+            await setAsync(cacheKey, JSON.stringify(converters), 'EX', 60 * 5);
+        }
         res.json(converters);
     } catch (error) {
         res.status(400).json({ error: error.message });

@@ -51,6 +51,11 @@ app.use(session({
     },
 }));
 
+app.use((req, res, next) => {
+    req.redisClient = redisClient;
+    next();
+});
+
 app.use('/users', userRouter);
 app.use('/convertions', converterRouter);
 
