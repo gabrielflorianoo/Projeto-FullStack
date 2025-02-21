@@ -16,7 +16,11 @@ const cookieParser = require('cookie-parser');
 const userRouter = require('./routes/user');
 const converterRouter = require('./routes/conversion');
 
-const redisClient = redis.createClient({ url: process.env.REDIS_URL });
+const redisClient = redis.createClient({
+    url: process.env.REDIS_URL, socket: {
+        connectTimeout: 10000 // Aumenta o tempo limite para conexão
+    }
+});
 
 redisClient.connect()
     .then(() => console.log("✅ Redis conectado com sucesso!"))
