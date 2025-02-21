@@ -21,7 +21,10 @@ const Register = () => {
             setError('');
             setTimeout(() => navigate('/'), 3000); // Redireciona após 3 segundos
         } catch (err) {
-            console.log(err)
+            if (err.status === 429) {
+                setError('Muitas tentativas de registro. Tente novamente mais tarde.');
+                return;
+            }
             setError('Erro ao registrar. ' + err.response?.data.error || err.message);
             setSuccessMessage('');
         }

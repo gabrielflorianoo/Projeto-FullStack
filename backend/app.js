@@ -8,9 +8,10 @@ if (!process.env.DB_USER || !process.env.DB_PASSWORD) {
 const cors = require('cors');
 const redis = require('redis');
 const express = require('express');
+const compression = require('compression');
 const session = require('express-session');
-const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo');
+const cookieParser = require('cookie-parser');
 
 const userRouter = require('./routes/user');
 const converterRouter = require('./routes/conversion');
@@ -24,7 +25,7 @@ require('./db/server');
 
 const app = express();
 
-app.set('trust proxy', true);
+app.set('trust proxy', 'loopback');
 
 app.use(
     cors({
@@ -34,6 +35,7 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+app.use(compression());     // Comprime as respostas HTTP
 app.use(session({
     store: MongoStore.create({
         mongoUrl: `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@teste.upiwi.mongodb.net/?retryWrites=true&w=majority&appName=teste`, // URL do seu banco MongoDB

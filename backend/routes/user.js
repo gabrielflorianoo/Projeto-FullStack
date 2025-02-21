@@ -1,8 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/UserController.js');
+const requestLimiter = require('express-rate-limit');   // Limita o número de requisições por IP
 
-router.post('/', async (req, res) => {
+let createUserLimiter = (req, res, next) => next();
+let createSessionLimiter = (req, res, next) => next();
+
+if (process.env.NODE_ENV === 'production') {
+    createUserLimiter = requestLimiter({
+        windowMs: 15 * 60 * 1000,  // 15 minutos
+        max: 3,                    // Limitar para 3 tentativas
+        message: { error: 'Muitas tentativas de criação de usuário. Tente novamente mais tarde.' },
+    });
+
+    createSessionLimiter = requestLimiter({
+        windowMs: 15 * 60 * 1000,  // 15 minutos
+        max: 5,                    // Limitar para 5 tentativas
+        message: { error: 'Muitas tentativas de login. Tente novamente mais tarde.' },
+    });
+}
+
+router.post('/', createUserLimiter, async (req, res) => {
     try {
         await UserController.createUser(req, res);
     } catch (error) {
@@ -10,7 +28,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', createSessionLimiter, async (req, res) => {
     try {
         await UserController.createSession(req, res);
     } catch (error) {

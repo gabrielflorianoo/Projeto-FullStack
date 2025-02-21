@@ -1,12 +1,15 @@
 const { CurrencyConverterModel, UserModel } = require('../db/Models');
 const jwt = require('jsonwebtoken');
 
+// Chache para armazenar o histórico do usuário
+const cache = new Map();
+
 // Middleware para extrair usuário do token
 const getUserIdFromToken = (req) => {
-    const token = req.headers.authorization?.replace('Bearer ', '') || req.session.token;
+    const token = req.session.token || req.headers.authorization?.replace('Bearer ', '');
     if (!token) throw new Error('Token não fornecido');
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return decoded.id;
+    return decoded.userId;
 };
 
 // Criar um novo conversor
@@ -16,11 +19,11 @@ const createConverter = async (req, res) => {
         const { targetCurrency, exchangeRate, amountUsed } = req.body;
         
         const converter = await CurrencyConverterModel.create({
-            targetCurrency,
-            exchangeRate,
+            userId,
             amountUsed,
+            exchangeRate,
+            targetCurrency,
             sourceCurrency: "EUR",
-            userId
         });
 
         await UserModel.findByIdAndUpdate(userId, { $push: { history: converter._id } });
@@ -36,12 +39,18 @@ const getConverterInPeriod = async (req, res) => {
     try {
         const userId = getUserIdFromToken(req);
         const { date } = req.body;
-        
+
+        const cacheKey = `${userId}-${date.startDate}-${date.endDate}`;
+        if (cache.has(cacheKey)) {
+            return res.json(cache.get(cacheKey));
+        }
+
         const converters = await CurrencyConverterModel.find({
             userId,
             createdAt: { $gte: new Date(date.startDate), $lte: new Date(date.endDate) }
         });
 
+        cache.set(cacheKey, converters);
         res.json(converters);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -53,6 +62,11 @@ const getConverterByCurrency = async (req, res) => {
     try {
         const userId = getUserIdFromToken(req);
         const { currency } = req.body;
+
+        const cacheKey = `${userId}-${currency}`;
+        if (cache.has(cacheKey)) {
+            return res.json(cache.get(cacheKey));
+        }
         
         const converters = await CurrencyConverterModel.find({
             userId,
@@ -70,7 +84,11 @@ const getConverterByExchangeRate = async (req, res) => {
     try {
         const userId = getUserIdFromToken(req);
         const { exchangeRate } = req.body;
-        console.log(exchangeRate);
+        
+        const cacheKey = `${userId}-${exchangeRate.startValue}-${exchangeRate.endValue}`;
+        if (cache.has(cacheKey)) {
+            return res.json(cache.get(cacheKey));
+        }
         
         const converters = await CurrencyConverterModel.find({
             userId,

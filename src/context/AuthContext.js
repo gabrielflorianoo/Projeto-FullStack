@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
         const fetchUser = async () => {
             const session = await getSession();
         if (session.token) {
-                setUser(session.token.user);
+                setUser(session.token.userId);
             } else {
                 setUser(null);
                 console.log('Usuário não autenticado');
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     const login = async (credentials) => {
         try {
             const response = await loginUser(credentials);
-            setUser(response.token.user);
+            setUser(response.token.userId);
         } catch (error) {
             console.error('Erro ao fazer login:', error);
             throw error;
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     const register = async (credentials) => {
         try {
             const response = await createUser(credentials);
-            setUser(response.token.user);
+            setUser(response.token.userId);
         } catch (error) {
             console.error('Erro ao registrar:', error);
             throw error;

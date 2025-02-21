@@ -1,7 +1,8 @@
 const { UserModel, SessionModel } = require('../db/Models');
 const { body, validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
+
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const escapeHtml = require('escape-html');
 
 const createSession = async (req, res) => {
@@ -17,13 +18,13 @@ const createSession = async (req, res) => {
             return res.status(401).json({ error: 'Credenciais inválidas' });
         }
 
-        const token = jwt.sign({ user: user }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '3h' });
         req.session.token = token;
         
         // Salva o token da sessão no MongoDB
         const sessionData = {
             _id: `${req.session.id}`,
-            token: req.session.token,
+            token: token,
             expires: new Date(Date.now() + 1000 * 60 * 60 * 3), // Expira em 3 horas
         };
 
@@ -45,6 +46,8 @@ const logout = async (req, res) => {
             req.session.destroy((err) => (err ? reject(err) : resolve()));
         });
 
+        console.log(req.session)
+
         return res.json({ success: true });
     } catch (error) {
         return res.status(500).json({ error: error.message });
@@ -54,8 +57,6 @@ const logout = async (req, res) => {
 const getSession = async (req, res) => {
     try {
         const session = await SessionModel.findById(req.session.id);
-
-        console.log("Token: ", session.token); // Agora deve funcionar
 
         if (session) {
             if (session.expires > Date.now()) {
@@ -76,10 +77,11 @@ const getSession = async (req, res) => {
 
 const createUser = async (req, res) => {
     await body('name').trim().notEmpty().run(req);
-    await body('email').isEmail().run(req);
+    await body('email').isEmail().normalizeEmail().run(req);
     await body('password').isLength({ min: 6 }).run(req);
+
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ error: 'Validação falhou' });
+    if (!errors.isEmpty()) return res.status(400).json({ error: 'Validação falhou', details: errors.array() });
 
     const { name, email, password } = req.body;
     try {
@@ -94,13 +96,13 @@ const createUser = async (req, res) => {
         });
         await user.save();
 
-        const token = jwt.sign({ user: user }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '3h' });
         req.session.token = token;
         
         // Salva o token da sessão no MongoDB
         const sessionData = {
             _id: `${req.session.id}`,
-            token: req.session.token,
+            token: token,
             expires: new Date(Date.now() + 1000 * 60 * 60 * 3), // Expira em 3 horas
         };
 

@@ -17,6 +17,10 @@ const Login = () => {
             await login({ email, password });
             navigate('/'); // Redireciona para a página inicial
         } catch (err) {
+            if (err.status === 429) {
+                setError('Muitas tentativas de login. Tente novamente mais tarde.');
+                return;
+            }
             setError('Email ou senha inválidos');
         }
     };
