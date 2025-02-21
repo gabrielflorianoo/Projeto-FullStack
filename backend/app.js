@@ -60,6 +60,13 @@ app.use((req, res, next) => {
     req.redisClient = redisClient;
     next();
 });
+app.use((req, res, next) => {
+    console.log("Cliente:", req.redisClient);
+    res.on('finish', () => {
+        req.redisClient.disconnect();
+    });
+    next();
+});
 
 app.use('/users', userRouter);
 app.use('/convertions', converterRouter);
