@@ -11,8 +11,8 @@ const getUserIdFromToken = (req) => {
 };
 
 // Deixa o cliente Redis disponível para uso assíncrono
-const getAsync = promisify(req.redisClient.get).bind(req.redisClient);
-const setAsync = promisify(req.redisClient.set).bind(req.redisClient);
+const getAsync = (req) => promisify(req.redisClient.get).bind(req.redisClient);
+const setAsync = (req) => promisify(req.redisClient.set).bind(req.redisClient);
 
 // Criar um novo conversor
 const createConverter = async (req, res) => {
