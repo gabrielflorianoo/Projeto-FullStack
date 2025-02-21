@@ -64,9 +64,6 @@ app.use((req, res, next) => {
 });
 app.use((req, res, next) => {
     console.log("Cliente:", req.redisClient);
-    res.on('finish', () => {
-        req.redisClient.disconnect();
-    });
     next();
 });
 
