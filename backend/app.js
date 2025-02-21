@@ -17,9 +17,11 @@ const userRouter = require('./routes/user');
 const converterRouter = require('./routes/conversion');
 
 const redisClient = redis.createClient({
-    url: process.env.REDIS_URL, socket: {
+    url: process.env.REDIS_URL,
+    socket: {
         connectTimeout: 10000 // Aumenta o tempo limite para conexão
-    }
+    },
+    tls: true // Habilita o uso de TLS
 });
 
 redisClient.connect()
