@@ -11,8 +11,8 @@ const getUserIdFromToken = (req) => {
 };
 
 // Deixa o cliente Redis disponível para uso assíncrono
-const getAsync = (redisClient, key) => promisify(redisClient.get).bind(redisClient)(key);
-const setAsync = (redisClient, key, value) => promisify(redisClient.set).bind(redisClient)(key, value, 'EX', 60 * 5);
+const getAsync = (req) => req.redisClient.get.bind(req.redisClient);
+const setAsync = (req) => req.redisClient.set.bind(req.redisClient);
 
 // Criar um novo conversor
 const createConverter = async (req, res) => {
@@ -44,7 +44,7 @@ const getConverterInPeriod = async (req, res) => {
 
         const cacheKey = `${userId}-${date.startDate}-${date.endDate}`;
         if (req.redisClient) {
-            const cachedData = await getAsync(req.redisClient, cacheKey);
+            const cachedData = await req.redisClient.get(cacheKey);
             if (cachedData) {
                 return res.json(JSON.parse(cachedData));
             }
@@ -56,7 +56,9 @@ const getConverterInPeriod = async (req, res) => {
         });
 
         if (req.redisClient) {
-            await setAsync(req.redisClient, cacheKey, JSON.stringify(converters));
+            await req.redisClient.set(cacheKey, JSON.stringify(converters), {
+                EX: 60 * 5 // Expira em 5 minutos
+            });
         }
         res.json(converters);
     } catch (error) {
@@ -72,7 +74,7 @@ const getConverterByCurrency = async (req, res) => {
 
         const cacheKey = `${userId}-${currency}`;
         if (req.redisClient) {
-            const cachedData = await getAsync(req.redisClient, cacheKey);
+            const cachedData = await req.redisClient.get(cacheKey);
             if (cachedData) {
                 return res.json(JSON.parse(cachedData));
             }
@@ -84,7 +86,9 @@ const getConverterByCurrency = async (req, res) => {
         });
 
         if (req.redisClient) {
-            await setAsync(req.redisClient, cacheKey, JSON.stringify(converters));
+            await req.redisClient.set(cacheKey, JSON.stringify(converters), {
+                EX: 60 * 5 // Expira em 5 minutos
+            });
         }
         res.json(converters);
     } catch (error) {
@@ -100,7 +104,7 @@ const getConverterByExchangeRate = async (req, res) => {
         
         const cacheKey = `${userId}-${exchangeRate.startValue}-${exchangeRate.endValue}`;
         if (req.redisClient) {
-            const cachedData = await getAsync(req.redisClient, cacheKey);
+            const cachedData = await req.redisClient.get(cacheKey);
             if (cachedData) {
                 return res.json(JSON.parse(cachedData));
             }
@@ -112,7 +116,9 @@ const getConverterByExchangeRate = async (req, res) => {
         });
 
         if (req.redisClient) {
-            await setAsync(req.redisClient, cacheKey, JSON.stringify(converters));
+            await req.redisClient.set(cacheKey, JSON.stringify(converters), {
+                EX: 60 * 5 // Expira em 5 minutos
+            });
         }
         res.json(converters);
     } catch (error) {
